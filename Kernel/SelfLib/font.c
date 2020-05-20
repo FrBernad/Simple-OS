@@ -6,6 +6,8 @@
 
 #include <font.h>
 
+//each letter ocuppies 8*16=48pix
+
 static unsigned char __font_bitmap__[] = {
 //  32 $20 'space'
 //	width 8, bbx 0, bby -4, bbw 8, bbh 16

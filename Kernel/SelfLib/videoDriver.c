@@ -1,4 +1,5 @@
 #include <videoDriver.h>
+#include <font.h>
 
 struct vbe_mode_info_structure
 {
@@ -41,12 +42,12 @@ struct vbe_mode_info_structure
 
 static struct vbe_mode_info_structure * screen_info = (struct vbe_mode_info_structure *) 0x5C00;
 
-static uint32_t WIDTH = 1024;  //por defecto de VESA son estos
+static uint32_t WIDTH = 1024;  //VESA default values
 static uint32_t HEIGHT = 768;
 
 static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
 {
-    return screen_info->framebuffer + 3*(x + y * WIDTH);
+    return (uint32_t *)(screen_info->framebuffer + 3*(x + y * WIDTH));
 }
 
 void writePixel(uint32_t x, uint32_t y)
@@ -55,4 +56,10 @@ void writePixel(uint32_t x, uint32_t y)
     currentFrame[0] = 255;
     currentFrame[1] = 255;
     currentFrame[2] = 255;
+}
+
+//each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384
+
+void printLetter(uint8_t c){
+    
 }
