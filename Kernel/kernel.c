@@ -3,6 +3,7 @@
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
+#include <videoDriver.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -100,5 +101,7 @@ int main()
 	ncNewline();
 
 	ncPrint("[Finished]");
+
+	writePixel(0,0);
 	return 0;
 }

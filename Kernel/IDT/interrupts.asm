@@ -13,10 +13,13 @@ GLOBAL _irq03Handler
 GLOBAL _irq04Handler
 GLOBAL _irq05Handler
 
+GLOBAL _syscallHandler
+
 GLOBAL _exception0Handler
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
+EXTERN systemCall
 
 SECTION .text
 
@@ -71,7 +74,6 @@ SECTION .text
 %endmacro
 
 
-
 %macro exceptionHandler 1
 	pushState
 
@@ -113,6 +115,35 @@ picSlaveMask:
     pop     rbp
     retn
 
+;se llenan
+;%rdi, %rsi, %rdx, %rcx, %r8 y %r9 
+;necesito
+;%rax	%rdi	%rsi	%rdx	%r10	%r8	   %r9
+;syscalls 
+_syscallHandler:
+	push    rbp
+    mov     rbp, rsp
+
+	;mov [regsiters],rax
+	;mov [regsiters+8],rdi
+	;mov [regsiters+16],rsi
+	;mov [regsiters+24],rdx
+	;mov [regsiters+32],r10
+	;mov [regsiters+40],r8
+	;mov [regsiters+48],r9
+	;mov rdi,registers
+
+	push rcx
+	mov rcx,rax
+	push r10
+	
+	call systemCall
+
+	pop r10
+	pop rcx
+	
+	leave
+	ret
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
@@ -149,6 +180,15 @@ haltcpu:
 	ret
 
 
-
 SECTION .bss
 	aux resq 1
+
+	registers:
+		rrax resq 1
+		rrdi resq 1
+		rrsi resq 1
+		rrdx resq 1
+		rr10 resq 1
+		rr8 resq 1
+		rr9 resq 1
+	
