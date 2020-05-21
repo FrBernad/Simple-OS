@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include <stringLib.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -102,6 +103,7 @@ int main()
 
 	ncPrint("[Finished]");
 
-	writePixel(0,0);
+	clearScreen();
+
 	return 0;
 }

@@ -1,23 +1,12 @@
 #include <keyboard.h>
 #include <keyboardInfo.h>
+#include <commands.h>
+#include <keys.h>
 
-#define KEYS 59
-#define PRESSED 1
-#define RELEASED 2
-#define ERRROR -1
-
-#define L_SHFT 0x2A
-#define R_SHFT 0x36
-#define B_SPACE 0x0E
-#define SPACE 0x39
-#define CAPS_LCK 0x3A
-#define ENTER 0x1C
-
-#define IS_LETTER(c) (c >= 'a' && c <= 'z' ? 1 : 0)
-
-#define ABS(num) (num >= 0 ? num : num * -1)
+#define BUFFER_SIZE 50
 
 static uint8_t action(uint8_t scanCode);
+static void checkCommand();
 
 static const char pressCodes[KEYS][2] =
     {{0, 0}, {0, 0}, {'1', '!'}, {'2', '@'}, {'3', '#'}, {'4', '$'},
@@ -32,7 +21,8 @@ static const char pressCodes[KEYS][2] =
     {'v', 'V'}, {'b', 'B'}, {'n', 'N'}, {'m', 'M'}, {',', '<'}, 
     {'.', '>'}, {'/', '?'}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
-static uint8_t scanCode, currentAction, specialChars=0, capsLock = 0;
+static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, bufferIndx = 0;
+static uint8_t buffer[BUFFER_SIZE]={0};
 
 void keyboard_handler(){
     if (hasKey())
@@ -49,6 +39,7 @@ void keyboard_handler(){
                 break;
 
             case ENTER:
+                checkCommand();
                 newLine();
                 break;
 
@@ -67,11 +58,16 @@ void keyboard_handler(){
             default:
                 if (pressCodes[scanCode][0])
                 {
-                    if (!IS_LETTER(pressCodes[scanCode][0]))
-                        putchar(pressCodes[scanCode][specialChars]);
-                    else
-                    {
-                        putchar(pressCodes[scanCode][ABS(capsLock - (specialChars))]);
+                    uint8_t letter;
+                    if (!IS_LETTER(pressCodes[scanCode][0])){
+                        letter = pressCodes[scanCode][specialChars];
+                        putchar(letter);
+                        buffer[bufferIndx++]= letter;
+                    }
+                    else{
+                        letter = pressCodes[scanCode][ABS(capsLock - (specialChars))];
+                        putchar(letter);
+                        buffer[bufferIndx++] = letter;
                     }
                 }
             }
@@ -89,65 +85,23 @@ void keyboard_handler(){
     }
 }
 
+static void checkCommand(){
+    uint32_t command,found=0;
 
-void poolingKeyboard()
-{
-    uint8_t scanCode, currentAction, specialChars=0, capsLock=0;
-    while (1)
+    for (uint32_t i = 0; commands[i][0] != 0 && !found; i++)
     {
-        if (hasKey())
-        {
-            scanCode = getKey();
-            currentAction = action(scanCode);
-            if (currentAction == PRESSED)
-            {
-                switch (scanCode)
-                {
-                case L_SHFT:
-                case R_SHFT:
-                    specialChars = 1;
-                    break;
+        if(strcmp(commands[i],buffer)==0)
+            found=1;
+    }
 
-                case ENTER:
-                    newLine();
-                    break;
+    if(found){
+        switch(command){
+            case HELP:
+            break
 
-                case CAPS_LCK:
-                    capsLock = capsLock == 1 ? 0 : 1;
-                    break;
-
-                case SPACE:
-                    putchar(' ');
-                    break;
-
-                case B_SPACE:
-                    deletechar();
-                    break;
-
-                default:
-                    if (pressCodes[scanCode][0])
-                    {
-                        if (!IS_LETTER(pressCodes[scanCode][0]))
-                            putchar(pressCodes[scanCode][specialChars]);
-                        else
-                        {
-                            putchar(pressCodes[scanCode][ABS(capsLock - (specialChars))]);
-                        }
-                    }
-                }
-            }
-            else if (currentAction == RELEASED)
-            {
-                switch (scanCode)
-                {
-                case L_SHFT | 0x80:
-                case R_SHFT | 0x80:
-                    specialChars = 0;
-                    break;
-                }
-            }
         }
     }
+    
 }
 
 static uint8_t action(uint8_t scanCode)
