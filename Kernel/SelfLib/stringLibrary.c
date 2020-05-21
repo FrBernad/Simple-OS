@@ -26,3 +26,11 @@ void deletechar()
 {
     removeCharFromScreen(defaultBGColour);
 }
+
+void printString(char * str) {
+    for (uint8_t i = 0; str[i] != 0; i++)
+    {
+        putcharr(str[i]);
+    }
+    
+}
