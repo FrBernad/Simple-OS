@@ -2,7 +2,7 @@
 #include <keyboardInfo.h>
 #include <commands.h>
 #include <keys.h>
-#include <stringLib.h>
+#include <stringLibrary.h>
 
 #define BUFFER_SIZE 50
 
@@ -46,7 +46,7 @@ keyboard_handler()
                 break;
 
             case ENTER:
-                newLine();
+              //  newLine();
                 checkCommand();
                 cleanBuffer();
                 break;
@@ -57,26 +57,26 @@ keyboard_handler()
 
             case SPACE:
                 buffer[bufferIndx++] = ' ';
-                putchar(' ');
+                putcharr(' ');
                 break;
 
             case B_SPACE:
-                deletechar();
+              //  deletechar();
                 break;
 
             default:
                 if (pressCodes[scanCode][0])
                 {
-                    uint8_t letter;
+                    char letter;
                     if (!IS_LETTER(pressCodes[scanCode][0])){
                         letter = pressCodes[scanCode][specialChars];
                         buffer[bufferIndx++]= letter;
-                        putchar(letter);
+                        putcharr(letter);
                     }
                     else{
                         letter = pressCodes[scanCode][ABS(capsLock - (specialChars))];
                         buffer[bufferIndx++] = letter;
-                        putchar(letter);
+                        putcharr(letter);
                     }
                 }
             }
@@ -96,12 +96,10 @@ keyboard_handler()
 
 static void checkCommand(){
     uint32_t command,found=0;
-    printStringLn(buffer);
     for (command = 0; commands[command].command != 0 && !found; command++)
     {
-        if(stringcmp(commands[command].name,buffer,' ')){
+        if(stringcmpp(commands[command].name,buffer,' ')){
             found=1;
-            printInt(found);
         }
     }
 
@@ -129,7 +127,7 @@ static void checkCommand(){
     }
 
     else{
-        printStringLn("Invalid command");
+   //     printStringLn("Invalid command");
     }
     
 }

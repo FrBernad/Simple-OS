@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <string.h>
-#include <stringLib.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -105,8 +104,11 @@ int main()
 
 	ncPrint("[Finished]");
 
-	clearScreen();
+	char defaultBGColour[RGB] = {0, 0, 0};
+	char defaultFontColour[RGB] = {255, 255, 255};
 
+	printChar('!',defaultBGColour,defaultFontColour);
+	
 	while(1);
 
 	return 0;

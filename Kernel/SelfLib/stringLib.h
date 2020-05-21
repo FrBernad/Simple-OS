@@ -11,14 +11,14 @@
 
 void clearScreen();
 void newLine();
-void putchar(char c);
+// void putchar(char c);
 void printString(char * str);
 void printStringWCL(char * str, uint8_t colour, uint64_t count);
 void printStringLn(char * str);
 void printInt(uint64_t num);
 void printIntLn(uint64_t num);
 void activateKeyboard();
-uint8_t stringcmp(char * str1,char * str2, char delimiter);
-void deletechar();
+// uint8_t stringcmp(char * str1,char * str2, char delimiter);
+// void deletechar();
 
 #endif
