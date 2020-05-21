@@ -23,6 +23,7 @@ static const char pressCodes[KEYS][2] =
 
 static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, bufferIndx = 0;
 static uint8_t buffer[BUFFER_SIZE]={0};
+static t_command commands[]={{&help}}
 
 void keyboard_handler(){
     if (hasKey())
@@ -61,13 +62,13 @@ void keyboard_handler(){
                     uint8_t letter;
                     if (!IS_LETTER(pressCodes[scanCode][0])){
                         letter = pressCodes[scanCode][specialChars];
-                        putchar(letter);
                         buffer[bufferIndx++]= letter;
+                        putchar(letter);
                     }
                     else{
                         letter = pressCodes[scanCode][ABS(capsLock - (specialChars))];
-                        putchar(letter);
                         buffer[bufferIndx++] = letter;
+                        putchar(letter);
                     }
                 }
             }

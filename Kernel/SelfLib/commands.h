@@ -4,7 +4,7 @@
 typedef struct{
     void(*command)();
     uint8_t * name;
-}command;
+}t_command;
 
 #define HELP 0
 #define INFOREG 1
@@ -13,5 +13,11 @@ typedef struct{
 #define CPUID 4
 #define TEMP 5
 
+void help();
+void inforeg();
+void printmem(uint8_t * mem);
+void time();
+void cpuid();
+void temp();
 
 #endif
