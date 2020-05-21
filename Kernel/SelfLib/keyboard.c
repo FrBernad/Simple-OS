@@ -46,7 +46,7 @@ keyboard_handler()
                 break;
 
             case ENTER:
-              //  newLine();
+                newLine();
                 checkCommand();
                 cleanBuffer();
                 break;
@@ -57,7 +57,7 @@ keyboard_handler()
 
             case SPACE:
                 buffer[bufferIndx++] = ' ';
-                putcharr(' ');
+                putChar(' ');
                 break;
 
             case B_SPACE:
@@ -71,12 +71,12 @@ keyboard_handler()
                     if (!IS_LETTER(pressCodes[scanCode][0])){
                         letter = pressCodes[scanCode][specialChars];
                         buffer[bufferIndx++]= letter;
-                        putcharr(letter);
+                        putChar(letter);
                     }
                     else{
                         letter = pressCodes[scanCode][ABS(capsLock - (specialChars))];
                         buffer[bufferIndx++] = letter;
-                        putcharr(letter);
+                        putChar(letter);
                     }
                 }
             }
@@ -98,7 +98,7 @@ static void checkCommand(){
     uint32_t command,found=0;
     for (command = 0; commands[command].command != 0 && !found; command++)
     {
-        if(stringcmpp(commands[command].name,buffer,' ')){
+        if(stringcmp(commands[command].name,buffer,' ')){
             found=1;
         }
     }

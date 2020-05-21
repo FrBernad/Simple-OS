@@ -3,14 +3,56 @@
 #include <stdint.h>
 #include <stringLibrary.h>
 
+static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
+
 static char defaultBGColour[RGB] = {0, 0, 0};
 static char defaultFontColour[RGB] = {255, 255, 255};
 
-void putcharr(char c){
+void putChar(char c){
     printCharOnScreen(c,defaultBGColour,defaultFontColour);
 }
 
-uint8_t stringcmpp(char *str1, char *str2, char delimiter)
+void deletechar()
+{
+    removeCharFromScreen(defaultBGColour);
+}
+
+void printString(char * str) {
+    for (uint8_t i = 0; str[i] != 0; i++)
+    {
+        putChar(str[i]);
+    }
+}
+
+void printStringLn(char *str)
+{
+    for (uint8_t i = 0; str[i] != 0; i++)
+    {
+        putChar(str[i]);
+    }
+    newLine();
+}
+
+void printInt(uint64_t num)
+{
+    char buffer[10];
+    uintToBase(num, buffer, 10);
+    printString(buffer);
+}
+
+void printIntLn(uint64_t num)
+{
+    char buffer[10];
+    uintToBase(num, buffer, 10);
+    printString(buffer);
+    newLine();
+}
+
+void newLine(){
+    changeLineOnScreen();
+}
+
+uint8_t stringcmp(char *str1, char *str2, char delimiter)
 {
     uint8_t i;
     for (i = 0; str1[i] != 0 && str2[i] != 0 && str1[i] != delimiter && str2[i] != delimiter; i++)
@@ -22,14 +64,34 @@ uint8_t stringcmpp(char *str1, char *str2, char delimiter)
     return str1[i] == 0 || str2[i] == 0 || str1[i] == delimiter || str2[i] == delimiter ? 0 : 1;
 }
 
-void deletechar()
+static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 {
-    removeCharFromScreen(defaultBGColour);
-}
+    char *p = buffer;
+    char *p1, *p2;
+    uint32_t digits = 0;
 
-void printString(char * str) {
-    for (uint8_t i = 0; str[i] != 0; i++)
+    //Calculate characters for each digit
+    do
     {
-        putcharr(str[i]);
+        uint32_t remainder = value % base;
+        *p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
+        digits++;
+    } while (value /= base);
+
+    // Terminate string in buffer.
+    *p = 0;
+
+    //Reverse string in buffer.
+    p1 = buffer;
+    p2 = p - 1;
+    while (p1 < p2)
+    {
+        char tmp = *p1;
+        *p1 = *p2;
+        *p2 = tmp;
+        p1++;
+        p2--;
     }
+
+    return digits;
 }

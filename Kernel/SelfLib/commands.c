@@ -1,5 +1,5 @@
 #include <commands.h>
-#include <stringLib.h>
+#include <stringLibrary.h>
 
 //uint8_t **commands = {"help", "inforeg", "printmem", "time", "cpuid", "temp", ""};
 

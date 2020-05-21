@@ -70,7 +70,7 @@ void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB])
 
     uint32_t x = currentX, y = currentY;
 
-    if (currentX%WIDTH == 0)
+    if (currentX != 0 && currentX%WIDTH == 0)
     {
         currentY += CHAR_HEIGHT;
     }
@@ -118,6 +118,10 @@ void removeCharFromScreen(char bgColour[RGB])
     }
 }
 
+void changeLineOnScreen(){
+    currentY+=CHAR_HEIGHT;
+    currentX=0;
+}
 //00110010
 //each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384
 //in every row max chars = 1024/8=128
