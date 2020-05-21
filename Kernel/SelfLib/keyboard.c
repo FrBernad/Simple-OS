@@ -23,13 +23,17 @@ static const char pressCodes[KEYS][2] =
 
 static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, bufferIndx = 0;
 static uint8_t buffer[BUFFER_SIZE]={0};
-static t_command commands[]={{&help}}
+static t_command commands[] = {{&help, "help"}, {&inforeg, "inforeg"}, {&printmem, "printmem"}, {&time, "time"}, {&cpuid, "cpuid"}, {&temp, "temp"}, {0 , ""}};
 
-void keyboard_handler(){
+void
+keyboard_handler()
+{
     if (hasKey())
     {
         scanCode = getKey();
         currentAction = action(scanCode);
+        printString("buffer:");
+        printStringLn(buffer);
         if (currentAction == PRESSED)
         {
             switch (scanCode)
@@ -89,18 +93,37 @@ void keyboard_handler(){
 static void checkCommand(){
     uint32_t command,found=0;
 
-    for (uint32_t i = 0; commands[i][0] != 0 && !found; i++)
+    for (command = 0; commands[command].command != 0 && !found; command++)
     {
-        if(strcmp(commands[i],buffer)==0)
+        if(strcmp(commands[command].name,buffer,' ')==0)
             found=1;
     }
 
     if(found){
         switch(command){
             case HELP:
-            break
-
+                commands[HELP].command();
+                break;
+            case INFOREG:
+                commands[INFOREG].command();
+                break;
+            case PRINTMEM:
+                commands[PRINTMEM].command();
+                break;
+            case TIME:
+                commands[TIME].command();
+                break;
+            case CPUID:
+                commands[CPUID].command();
+                break;
+            case TEMP:
+                commands[TEMP].command();
+                break;
         }
+    }
+
+    else{
+        printStringLn("Invalid command");
     }
     
 }

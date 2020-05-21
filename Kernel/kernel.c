@@ -105,5 +105,7 @@ int main()
 
 	clearScreen();
 
+	while(1);
+
 	return 0;
 }
