@@ -2,8 +2,11 @@
 #include <keyboardInfo.h>
 #include <commands.h>
 #include <keys.h>
+#include <stringLib.h>
 
 #define BUFFER_SIZE 50
+
+#define ABS(x) x > 0 ? x : x*-1
 
 static uint8_t action(uint8_t scanCode);
 static void checkCommand();
@@ -22,7 +25,7 @@ static const char pressCodes[KEYS][2] =
     {'.', '>'}, {'/', '?'}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
 static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, bufferIndx = 0;
-static uint8_t buffer[BUFFER_SIZE]={0};
+static char buffer[BUFFER_SIZE]={0};
 static t_command commands[] = {{&help, "help"}, {&inforeg, "inforeg"}, {&printmem, "printmem"}, {&time, "time"}, {&cpuid, "cpuid"}, {&temp, "temp"}, {0 , ""}};
 
 void
@@ -92,16 +95,18 @@ keyboard_handler()
 
 static void checkCommand(){
     uint32_t command,found=0;
-
+    printString("entre");
     for (command = 0; commands[command].command != 0 && !found; command++)
     {
-        if(strcmp(commands[command].name,buffer,' ')==0)
+        if(stringcmp(commands[command].name,buffer,' ')){
             found=1;
+        }
     }
 
     if(found){
-        switch(command){
+        switch(command-1){
             case HELP:
+                printString("entre");
                 commands[HELP].command();
                 break;
             case INFOREG:

@@ -4,7 +4,7 @@
 //uint8_t **commands = {"help", "inforeg", "printmem", "time", "cpuid", "temp", ""};
 
 void help(){
-    printString("Help: prints all available commands and ")
+    printStringLn("Help: prints all available commands and ");
 }
 
 //todo: print registers, done in assembly

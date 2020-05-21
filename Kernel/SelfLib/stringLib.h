@@ -18,6 +18,7 @@ void printStringLn(char * str);
 void printInt(uint64_t num);
 void printIntLn(uint64_t num);
 void activateKeyboard();
+uint8_t stringcmp(char * str1,char * str2, char delimiter);
 void deletechar();
 
 #endif

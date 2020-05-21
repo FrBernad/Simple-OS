@@ -1,9 +1,11 @@
 #ifndef COMMANDS_H
 #define COMMANDS_H
 
+#include <stdint.h>
+
 typedef struct{
     void(*command)();
-    uint8_t * name;
+    char * name;
 }t_command;
 
 #define HELP 0
