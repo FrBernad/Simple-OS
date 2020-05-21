@@ -36,8 +36,6 @@ keyboard_handler()
     {
         scanCode = getKey();
         currentAction = action(scanCode);
-        printString("buffer:");
-        printStringLn(buffer);
         if (currentAction == PRESSED)
         {
             switch (scanCode)
@@ -48,9 +46,9 @@ keyboard_handler()
                 break;
 
             case ENTER:
+                newLine();
                 checkCommand();
                 cleanBuffer();
-                newLine();
                 break;
 
             case CAPS_LCK:
@@ -58,6 +56,7 @@ keyboard_handler()
                 break;
 
             case SPACE:
+                buffer[bufferIndx++] = ' ';
                 putchar(' ');
                 break;
 
@@ -97,18 +96,18 @@ keyboard_handler()
 
 static void checkCommand(){
     uint32_t command,found=0;
-    printString("entre");
+    printStringLn(buffer);
     for (command = 0; commands[command].command != 0 && !found; command++)
     {
         if(stringcmp(commands[command].name,buffer,' ')){
             found=1;
+            printInt(found);
         }
     }
 
     if(found){
         switch(command-1){
             case HELP:
-                printString("entre");
                 commands[HELP].command();
                 break;
             case INFOREG:
@@ -150,4 +149,5 @@ static void cleanBuffer(){
     {
         buffer[i]=0;
     }
+    bufferIndx=0;
 }

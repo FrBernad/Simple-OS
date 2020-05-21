@@ -68,13 +68,14 @@ void printStringWCL(char * str, uint8_t colour, uint64_t count)
 }
 
 uint8_t stringcmp(char * str1,char * str2, char delimiter){
-    for (uint8_t i = 0; str1[i] != 0 && str2[i] != 0 && str1[i] != delimiter && str2[i]!=delimiter; i++)
+    uint8_t i;
+    for (uint8_t i = 0; str1[i] != 0 && str2[i] != 0 && str1[i] != delimiter && str2[i] != delimiter; i++)
     {
         if(str1[i]!=str2[i])
             return 0;
     }
 
-    return 1;
+    return str1[i] == 0 || str2[i] == 0 || str1[i] == delimiter || str2[i] == delimiter ? 0 : 1 ;
 }
 
 
