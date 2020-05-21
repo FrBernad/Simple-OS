@@ -1,5 +1,6 @@
 #include <videoDriver.h>
 #include <font.h>
+#include <stringLibrary.h>
 struct vbe_mode_info_structure
 {
     uint16_t attributes;  // deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -62,18 +63,21 @@ void writePixel(uint32_t x, uint32_t y, char colour[RGB])
 
 void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB])
 {
-    if (WIDTH - currentX < RGB * CHAR_WIDTH || HEIGHT - currentY < RGB * CHAR_HEIGHT){
+    if (currentX != 0 && currentX == WIDTH)
+    {
+        currentY += CHAR_HEIGHT;
+        currentX = 0;
+    }
+
+    if (WIDTH - currentX < CHAR_WIDTH || HEIGHT - currentY < CHAR_HEIGHT){
         return;
     }
 
     char * charMap = getCharMap(c);
 
+
     uint32_t x = currentX, y = currentY;
 
-    if (currentX != 0 && currentX%WIDTH == 0)
-    {
-        currentY += CHAR_HEIGHT;
-    }
     
     for (int i = 0; i < CHAR_HEIGHT; i++)
     {
@@ -123,12 +127,16 @@ void changeLineOnScreen(){
     currentX=0;
 }
 
-void clearOnScreen(){
-	while(currentY < HEIGHT)
-		while(currentX < WIDTH)
-			putChar(' ');
-	currentX = 0;
-	currentY = 0;
+void clearScreen(char bgColour[RGB]){
+    for (int i = 0; i < HEIGHT; i++)
+    {
+        for (int j = 0; j < WIDTH; j++)
+        {
+            writePixel(i, j, bgColour);
+        }
+    }
+    currentX = 0;
+    currentY = 0;
 }
 //00110010
 //each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384

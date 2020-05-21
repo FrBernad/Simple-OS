@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <string.h>
+#include <stringLibrary.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>

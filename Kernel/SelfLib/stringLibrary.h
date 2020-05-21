@@ -9,5 +9,6 @@ void newLine();
 void printStringLn(char *str);
 void printInt(uint64_t num);
 void printIntLn(uint64_t num);
+void clear();
 
 #endif
