@@ -7,7 +7,7 @@ static char defaultBGColour[RGB] = {0, 0, 0};
 static char defaultFontColour[RGB] = {255, 255, 255};
 
 void putcharr(char c){
-    printCharInScreen(c,defaultBGColour,defaultFontColour);
+    printCharOnScreen(c,defaultBGColour,defaultFontColour);
 }
 
 uint8_t stringcmpp(char *str1, char *str2, char delimiter)
@@ -32,5 +32,4 @@ void printString(char * str) {
     {
         putcharr(str[i]);
     }
-    
 }

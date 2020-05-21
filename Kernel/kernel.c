@@ -104,11 +104,6 @@ int main()
 
 	ncPrint("[Finished]");
 
-	char defaultBGColour[RGB] = {0, 0, 0};
-	char defaultFontColour[RGB] = {255, 255, 255};
-
-	printChar('!',defaultBGColour,defaultFontColour);
-	
 	while(1);
 
 	return 0;

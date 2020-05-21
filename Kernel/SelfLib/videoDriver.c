@@ -99,7 +99,7 @@ void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB])
 void removeCharFromScreen(char bgColour[RGB])
 {
     if(currentX%WIDTH<CHAR_WIDTH){
-        return
+        return;
     }
 
     currentX-=CHAR_WIDTH;
