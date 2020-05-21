@@ -34,3 +34,10 @@ void printString(char * str) {
     }
     
 }
+
+void newLine(){
+	do{
+		putChar(' ');
+		while ((uint8_t)(currentX - 0) % (WIDTH*3) != 0);
+	}
+}
