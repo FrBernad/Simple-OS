@@ -102,7 +102,7 @@ static void checkCommand(){
             found=1;
         }
     }
-
+    printInt(command);
     if(found){
         switch(command-1){
             case HELP:
@@ -127,7 +127,7 @@ static void checkCommand(){
     }
 
     else{
-   //     printStringLn("Invalid command");
+        printStringLn("Invalid command");
     }
     
 }

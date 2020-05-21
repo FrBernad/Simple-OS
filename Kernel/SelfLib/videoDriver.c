@@ -50,7 +50,7 @@ static uint32_t currentY = 0;
 
 static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
 {
-    return (uint32_t*)((uint32_t)screen_info->framebuffer + 3 * (x + y * WIDTH));
+   return (uint32_t*)((uint64_t)screen_info->framebuffer + 3 * (x + y * WIDTH)); //prque casteo a 64 funciona?
 }
 
 void writePixel(uint32_t x, uint32_t y, char colour[RGB])
