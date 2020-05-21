@@ -122,6 +122,14 @@ void changeLineOnScreen(){
     currentY+=CHAR_HEIGHT;
     currentX=0;
 }
+
+void clearOnScreen(){
+	while(currentY < HEIGHT)
+		while(currentX < WIDTH)
+			putChar(' ');
+	currentX = 0;
+	currentY = 0;
+}
 //00110010
 //each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384
 //in every row max chars = 1024/8=128
