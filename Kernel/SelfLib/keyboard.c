@@ -10,6 +10,7 @@
 
 static uint8_t action(uint8_t scanCode);
 static void checkCommand();
+static void cleanBuffer();
 
 static const char pressCodes[KEYS][2] =
     {{0, 0}, {0, 0}, {'1', '!'}, {'2', '@'}, {'3', '#'}, {'4', '$'},
@@ -48,6 +49,7 @@ keyboard_handler()
 
             case ENTER:
                 checkCommand();
+                cleanBuffer();
                 newLine();
                 break;
 
@@ -141,4 +143,11 @@ static uint8_t action(uint8_t scanCode)
         return RELEASED;
 
     return ERRROR;
+}
+
+static void cleanBuffer(){
+    for (uint32_t i = 0; i < BUFFER_SIZE; i++)
+    {
+        buffer[i]=0;
+    }
 }
