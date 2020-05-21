@@ -1,6 +1,5 @@
 #include <videoDriver.h>
 #include <font.h>
-
 struct vbe_mode_info_structure
 {
     uint16_t attributes;  // deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -44,6 +43,7 @@ static struct vbe_mode_info_structure * screen_info = (void *) 0x5C00;
 
 static uint32_t WIDTH = 1024;  //VESA default values
 static uint32_t HEIGHT = 768;
+
 static uint32_t currentX = 0;
 static uint32_t currentY = 0;
 
@@ -60,8 +60,8 @@ void writePixel(uint32_t x, uint32_t y, char colour[RGB])
     currentFrame[2] = colour[2];
 }
 
-void printChar(char c, char bgColour[RGB], char fontColour[RGB]){
-
+void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB])
+{
     if (WIDTH - currentX < RGB * CHAR_WIDTH || HEIGHT - currentY < RGB * CHAR_HEIGHT){
         return;
     }
@@ -70,6 +70,11 @@ void printChar(char c, char bgColour[RGB], char fontColour[RGB]){
 
     uint32_t x = currentX, y = currentY;
 
+    if (currentX%WIDTH == 0)
+    {
+        currentY += CHAR_HEIGHT;
+    }
+    
     for (int i = 0; i < CHAR_HEIGHT; i++)
     {
         for (int j = 0; j < CHAR_WIDTH; j++)
@@ -89,11 +94,30 @@ void printChar(char c, char bgColour[RGB], char fontColour[RGB]){
         y++;
     }
     currentX += CHAR_WIDTH;
-    if (currentX%WIDTH == 0)
+}
+
+void removeCharFromScreen(char bgColour[RGB])
+{
+    if(currentX%WIDTH<CHAR_WIDTH){
+        return
+    }
+
+    currentX-=CHAR_WIDTH;
+
+    uint32_t x = currentX, y = currentY;
+
+    for (int i = 0; i < CHAR_HEIGHT; i++)
     {
-        currentY += CHAR_HEIGHT;
+        for (int j = 0; j < CHAR_WIDTH; j++)
+        {
+            writePixel(x, y, bgColour);
+            x++;
+        }
+        x = currentX;
+        y++;
     }
 }
-    //00110010
-    //each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384
-    //in every row max chars = 1024/8=128
+
+//00110010
+//each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384
+//in every row max chars = 1024/8=128

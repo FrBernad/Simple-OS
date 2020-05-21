@@ -61,7 +61,7 @@ keyboard_handler()
                 break;
 
             case B_SPACE:
-              //  deletechar();
+                deletechar();
                 break;
 
             default:

@@ -35,13 +35,6 @@ void putchar(char c){
     currentVideo++;
 }
 
-void deletechar(){
-    *currentVideo=' ';
-    if (currentVideo > firstMem+1){
-        currentVideo-=2;
-    }
-}
-
 void printString(char * str){
     for (int i = 0; str[i] != 0; i++)
     {
