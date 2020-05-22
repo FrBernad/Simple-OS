@@ -79,6 +79,7 @@ void initVideoDriver(int BGColour, int FontColour)
     screens[1] = screen2;
 
     separateMainScreen();
+
 }
 
 void changeScreen(int screen){
@@ -88,9 +89,9 @@ void changeScreen(int screen){
 void writePixel(uint32_t x, uint32_t y, int colour)
 {
     uint32_t * currentFrame = getPixelDataByPosition(x, y);
-    currentFrame[0] =// (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C
-    currentFrame[1] =// (char)((colour >> 8) & 0xFF);
-    currentFrame[2] =// (char)(colour & 0xFF);
+    currentFrame[0] = (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C
+    currentFrame[1] = (char)((colour >> 8) & 0xFF);
+    currentFrame[2] = (char)(colour & 0xFF);
 }
 
 // 0 x XX XX XX XX
@@ -219,7 +220,7 @@ static void separateMainScreen(){
     {
         for (int x = 0; x < 2*CHAR_WIDTH; x++)
         {
-            writePixel(SCREEN_WIDTH/2-CHAR_WIDTH+x,y,RED);
+            writePixel(SCREEN_WIDTH/2-CHAR_WIDTH+x,y,WHITE);
         }
     }
 }
