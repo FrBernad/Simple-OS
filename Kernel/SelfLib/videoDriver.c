@@ -44,58 +44,77 @@ struct vbe_mode_info_structure
     uint8_t reserved1[206];
 } __attribute__((packed));
 
-static struct vbe_mode_info_structure * screen_info = (void *) 0x5C00;
+static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y);
+static void separateMainScreen();
 
+static struct vbe_mode_info_structure * screen_info = (void *) 0x5C00;
 static uint32_t SCREEN_WIDTH = 1024;  //VESA default values
 static uint32_t SCREEN_HEIGHT = 768;
 
-static uint32_t currentX = 0;
-static uint32_t currentY = 0;
+static t_screen screens[MAX_SCREENS];
+static t_screen * currentScreen;
 
-int defaultBGColour;
-int defaultFontColour;
-
-static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
-{
-   return (uint32_t*)((uint64_t)screen_info->framebuffer + PIXEL_SIZE * (x + y * SCREEN_WIDTH)); //prque casteo a 64 funciona?
-}
 
 void initVideoDriver(int BGColour, int FontColour)
 {
-    defaultBGColour = BGColour;
-    defaultFontColour = FontColour;
+    t_screen screen1;
+    screen1.defaultBGColour = BGColour;
+    screen1.defaultFontColour = FontColour;
+    screen1.currentX = 0;
+    screen1.currentY = 0;
+    screen1.offset = 0;
+    screen1.height = SCREEN_HEIGHT;
+    screen1.width = SCREEN_WIDTH/2;
+
+    screens[0]=screen1;
+
+    t_screen screen2;
+    screen2.defaultBGColour = BGColour;
+    screen2.defaultFontColour = FontColour;
+    screen2.currentX = 0;
+    screen2.currentY = 0;
+    screen2.offset = SCREEN_WIDTH/2;
+    screen2.height = SCREEN_HEIGHT;
+    screen2.width = SCREEN_WIDTH / 2;
+
+    screens[1] = screen2;
+
+    separateMainScreen();
+}
+
+void changeScreen(int screen){
+    currentScreen = &screens[screen-1];
 }
 
 void writePixel(uint32_t x, uint32_t y, int colour)
 {
     uint32_t * currentFrame = getPixelDataByPosition(x, y);
-    currentFrame[0] = (char)((colour >> 16) & 0xFF);
+    currentFrame[0] = (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C
     currentFrame[1] = (char)((colour >> 8) & 0xFF);
     currentFrame[2] = (char)(colour & 0xFF);
 }
 // 0 x XX XX XX XX
 
-void printCharOnScreen(char c, int bgColour, int fontColour)
+void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
 {
-    if (currentX != 0 && currentX >= SCREEN_WIDTH)
+
+    if (currentScreen->currentX != 0 && currentScreen->width - currentScreen->currentX < CHAR_WIDTH)
     {
-        currentY += CHAR_HEIGHT;
-        currentX = 0;
-        if(currentY==SCREEN_HEIGHT){
-            currentY -= CHAR_HEIGHT;
+        currentScreen->currentY += CHAR_HEIGHT;
+        currentScreen->currentX = 0;
+        if (currentScreen->currentY == currentScreen->height){
+            currentScreen->currentY -= CHAR_HEIGHT;
             scrollDownScreen();
         }
     }
 
-    if (SCREEN_WIDTH - currentX < CHAR_WIDTH || SCREEN_HEIGHT - currentY < CHAR_HEIGHT){
-        return;
-    }
+    // if (SCREEN_WIDTH - currentScreen->currentX < CHAR_WIDTH || SCREEN_HEIGHT - currentScreen->currentY < CHAR_HEIGHT){
+    //     return;
+    // }
 
     char * charMap = getCharMap(c);
 
-
-    uint32_t x = currentX, y = currentY;
-
+    uint32_t x = currentScreen->currentX + currentScreen->offset, y = currentScreen->currentY;
     
     for (int i = 0; i < CHAR_HEIGHT; i++)
     {
@@ -104,18 +123,23 @@ void printCharOnScreen(char c, int bgColour, int fontColour)
             int8_t isFont = (charMap[i] >> (CHAR_WIDTH - j - 1)) & 0x01;
             if (isFont)
             {
-                writePixel(x, y, 0xFFFFFF);
+                writePixel(x, y, currentScreen->defaultFontColour);
             }
             else
             {
-                writePixel(x, y, 0x000000);
+                writePixel(x, y, currentScreen->defaultBGColour);
             }
             x++;
         }
-        x = currentX;
+        x = currentScreen->currentX + currentScreen->offset;
         y++;
     }
-    currentX += CHAR_WIDTH;
+    
+    if (advance)
+    {
+        currentScreen->currentX += CHAR_WIDTH;
+    }
+    
 }
 
 void scrollDownScreen(){
@@ -130,53 +154,67 @@ void clearLineOnScreen(){
     {
         for (int j = 0; j < SCREEN_WIDTH; j++)
         {
-            writePixel(j, currentY + i, defaultBGColour);
+            writePixel(j, currentScreen->currentY + i, currentScreen->defaultBGColour);
         }
     }
 }
 
-void removeCharFromScreen()
-{
-    if(currentX%SCREEN_WIDTH<CHAR_WIDTH){
-        return;
+void removeCharFromScreen(){
+    if (currentScreen->currentX == 0)
+    {
+        if(currentScreen->currentY == 0){
+            return;
+        }
+        currentScreen->currentY -= CHAR_HEIGHT;
+        currentScreen->currentX = currentScreen->width;
     }
 
-    currentX-=CHAR_WIDTH;
+    currentScreen->currentX -= CHAR_WIDTH;
 
-    uint32_t x = currentX, y = currentY;
+    uint32_t x = currentScreen->currentX + currentScreen->offset, y = currentScreen->currentY;
 
     for (int i = 0; i < CHAR_HEIGHT; i++)
     {
         for (int j = 0; j < CHAR_WIDTH; j++)
         {
-            writePixel(x, y, defaultBGColour);
+            writePixel(x, y, currentScreen->defaultBGColour);
             x++;
         }
-        x = currentX;
+        x = currentScreen->currentX + currentScreen->offset;
         y++;
     }
 }
 
 void changeLineOnScreen(){
-    currentY+=CHAR_HEIGHT;
-    currentX=0;
-    if (currentY == SCREEN_HEIGHT)
+    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
+    currentScreen->currentY+=CHAR_HEIGHT;
+    currentScreen->currentX=0;
+    if (currentScreen->currentY == currentScreen->height)
     {
-        currentY -= CHAR_HEIGHT;
+        currentScreen->currentY -= CHAR_HEIGHT;
         scrollDownScreen();
     }
 }
 
 void clearScreen(){
-    for (int i = 0; i < SCREEN_HEIGHT; i++)
+    for (int y = 0; y < currentScreen->height; y++)
     {
-        for (int j = 0; j < SCREEN_WIDTH; j++)
+        for (int x = 0; x < currentScreen->width; x++)
         {
-            writePixel(i, j, defaultBGColour);
+            writePixel(x + currentScreen->offset, y, currentScreen->defaultBGColour);
         }
     }
-    currentX = 0;
-    currentY = 0;
+    currentScreen->currentX = 0;
+    currentScreen->currentY = 0;
+}
+
+static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
+{
+   return (uint32_t*)((uint64_t)screen_info->framebuffer + PIXEL_SIZE * (x + y * SCREEN_WIDTH)); //prque casteo a 64 funciona?
+}
+
+static void separateMainScreen(){
+
 }
 
 //00110010

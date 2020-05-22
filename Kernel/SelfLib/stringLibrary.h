@@ -1,6 +1,8 @@
 #ifndef STRING_LIBRARY_H
 #define STRING_LIBRARY_H
 
+#include <stdint.h>
+
 void putChar(char c);
 void printString(char * str);
 void printStringLn(char * str);

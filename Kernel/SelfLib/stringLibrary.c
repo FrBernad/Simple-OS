@@ -10,7 +10,7 @@ static int BGColour = BLACK;
 static int FontColour = WHITE;
 
 void putChar(char c){
-    printCharOnScreen(c,BGColour,FontColour);
+    printCharOnScreen(c,BGColour,FontColour,1);
 }
 
 void clearLine()

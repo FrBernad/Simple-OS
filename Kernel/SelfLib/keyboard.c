@@ -26,7 +26,7 @@ static const char pressCodes[KEYS][2] =
     {'v', 'V'}, {'b', 'B'}, {'n', 'N'}, {'m', 'M'}, {',', '<'}, 
     {'.', '>'}, {'/', '?'}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
 
-static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, bufferIndx = 0;
+static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, bufferIndx = 0, l_ctrl = 0;
 static char buffer[BUFFER_SIZE]={0};
 static t_command commands[] = {{&help, "help"}, {&inforeg, "inforeg"}, {&printmem, "printmem"}, {&time, "time"}, {&cpuid, "cpuid"}, {&temp, "temp"}, {0 , ""}};
 
@@ -48,7 +48,7 @@ keyboard_handler()
 
             case ENTER:
                 newLine();
-                checkCommand();
+              //  checkCommand();
                 cleanBuffer();
                 break;
 
@@ -62,6 +62,10 @@ keyboard_handler()
                 putChar(' ');
                 break;
 
+            case L_CONTROL:
+                l_ctrl = 1;
+                break;
+
             case B_SPACE:
                 if(bufferIndx!=0){
                     buffer[bufferIndx--]=0;
@@ -72,16 +76,36 @@ keyboard_handler()
             default:
                 if (pressCodes[scanCode][0])
                 {
-                    char letter;
-                    if (!IS_LETTER(pressCodes[scanCode][0])){
-                        letter = pressCodes[scanCode][specialChars];
-                        buffer[bufferIndx++]= letter;
-                        putChar(letter);
+                    if (l_ctrl){
+                        if (pressCodes[scanCode][0] == '0' + SCREEN_1)
+                        {
+                            changeScreen(SCREEN_1);
+                        }
+                        else if (pressCodes[scanCode][0] == '0' + SCREEN_2)
+                        {
+                            changeScreen(SCREEN_2);
+                        }
+                        else if (pressCodes[scanCode][0] == 'l'){
+                            clearScreen();
+                        }
+                        l_ctrl = 0;
                     }
                     else{
-                        letter = pressCodes[scanCode][ABS(capsLock - (specialChars))];
-                        buffer[bufferIndx++] = letter;
-                        putChar(letter);
+                        char letter;
+                        if (!IS_LETTER(pressCodes[scanCode][0]))
+                        {
+                            letter = pressCodes[scanCode][specialChars];
+                            buffer[bufferIndx++] = letter;
+                            putChar(letter);
+                        }
+                        else
+                        {
+                            {
+                                letter = pressCodes[scanCode][ABS(capsLock - (specialChars))];
+                                buffer[bufferIndx++] = letter;
+                                putChar(letter);
+                            }
+                        }
                     }
                 }
             }
@@ -90,9 +114,13 @@ keyboard_handler()
         {
             switch (scanCode)
             {
-            case L_SHFT | 0x80:
+            case L_SHFT | 0x80:   //for realease code 
             case R_SHFT | 0x80:
                 specialChars = 0;
+                break;
+
+            case L_CONTROL | 0x80:
+                l_ctrl = 0;
                 break;
             }
         }
@@ -101,6 +129,11 @@ keyboard_handler()
 
 static void checkCommand(){
     uint32_t command,found=0;
+
+    if(buffer[0]==0){
+        return;
+    }
+
     for (command = 0; commands[command].command != 0 && !found; command++)
     {
         if(stringcmp(commands[command].name,buffer)){

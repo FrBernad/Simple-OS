@@ -12,6 +12,7 @@
 #define SPACE 0x39
 #define CAPS_LCK 0x3A
 #define ENTER 0x1C
+#define L_CONTROL 0x1D
 
 #define IS_LETTER(c) (c >= 'a' && c <= 'z' ? 1 : 0)
 
