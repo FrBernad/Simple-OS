@@ -39,9 +39,10 @@ void * getStackBase()
 
 void * initializeKernelBinary()
 {
+	/*
 	char buffer[10];
-
 	ncPrint("[x64BareBones]");
+
 	ncNewline();
 
 	ncPrint("CPU Vendor:");
@@ -49,7 +50,7 @@ void * initializeKernelBinary()
 	ncNewline();
 
 	ncPrint("[Loading modules]");
-	ncNewline();
+	ncNewline();*/
 	void * moduleAddresses[] = {
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress
@@ -57,15 +58,15 @@ void * initializeKernelBinary()
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
 	ncPrint("[Done]");
-	ncNewline();
+/*	ncNewline();
 	ncNewline();
 
 	ncPrint("[Initializing kernel's binary]");
 	ncNewline();
-
+*/
 	clearBSS(&bss, &endOfKernel - &bss);
 
-	ncPrint("  text: 0x");
+/*	ncPrint("  text: 0x");
 	ncPrintHex((uint64_t)&text);
 	ncNewline();
 	ncPrint("  rodata: 0x");
@@ -77,10 +78,10 @@ void * initializeKernelBinary()
 	ncPrint("  bss: 0x");
 	ncPrintHex((uint64_t)&bss);
 	ncNewline();
-
 	ncPrint("[Done]");
 	ncNewline();
 	ncNewline();
+*/
 	return getStackBase();
 }
 
@@ -88,6 +89,7 @@ int main()
 {	
 	load_idt();
 	initVideoDriver(BLACK,WHITE);
+	/*
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -103,7 +105,7 @@ int main()
 	ncNewline();
 	ncPrint("  Sample data module contents: ");
 	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
+	ncNewline();*/
 
 	ncPrint("[Finished]");
 

@@ -54,7 +54,6 @@ static uint32_t SCREEN_HEIGHT = 768;
 static t_screen screens[MAX_SCREENS];
 static t_screen * currentScreen;
 
-
 void initVideoDriver(int BGColour, int FontColour)
 {
     t_screen screen1;
@@ -62,20 +61,20 @@ void initVideoDriver(int BGColour, int FontColour)
     screen1.defaultFontColour = FontColour;
     screen1.currentX = 0;
     screen1.currentY = 0;
-    screen1.offset = 0;
+    screen1.offset = CHAR_WIDTH;
     screen1.height = SCREEN_HEIGHT;
-    screen1.width = SCREEN_WIDTH/2;
+    screen1.width = SCREEN_WIDTH / 2 - 2 * CHAR_WIDTH - CHAR_WIDTH;
 
-    screens[0]=screen1;
+    screens[0] = screen1;
 
     t_screen screen2;
     screen2.defaultBGColour = BGColour;
     screen2.defaultFontColour = FontColour;
     screen2.currentX = 0;
     screen2.currentY = 0;
-    screen2.offset = SCREEN_WIDTH/2;
+    screen2.offset = SCREEN_WIDTH / 2 + 2 * CHAR_WIDTH;
     screen2.height = SCREEN_HEIGHT;
-    screen2.width = SCREEN_WIDTH / 2;
+    screen2.width = SCREEN_WIDTH / 2 - CHAR_WIDTH - 2 * CHAR_WIDTH;
 
     screens[1] = screen2;
 
@@ -89,11 +88,13 @@ void changeScreen(int screen){
 void writePixel(uint32_t x, uint32_t y, int colour)
 {
     uint32_t * currentFrame = getPixelDataByPosition(x, y);
-    currentFrame[0] = (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C
-    currentFrame[1] = (char)((colour >> 8) & 0xFF);
-    currentFrame[2] = (char)(colour & 0xFF);
+    currentFrame[0] =// (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C
+    currentFrame[1] =// (char)((colour >> 8) & 0xFF);
+    currentFrame[2] =// (char)(colour & 0xFF);
 }
+
 // 0 x XX XX XX XX
+// 0 x 00 FF 00 00 
 
 void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
 {
@@ -214,7 +215,13 @@ static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
 }
 
 static void separateMainScreen(){
-
+    for (int y = 0; y < SCREEN_HEIGHT; y++)
+    {
+        for (int x = 0; x < 2*CHAR_WIDTH; x++)
+        {
+            writePixel(SCREEN_WIDTH/2-CHAR_WIDTH+x,y,RED);
+        }
+    }
 }
 
 //00110010
