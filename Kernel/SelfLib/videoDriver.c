@@ -80,9 +80,12 @@ void initVideoDriver(int BGColour, int FontColour)
 
     separateMainScreen();
 
+    currentScreen = &screens[1];
+
 }
 
 void changeScreen(int screen){
+    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
     currentScreen = &screens[screen-1];
 }
 
