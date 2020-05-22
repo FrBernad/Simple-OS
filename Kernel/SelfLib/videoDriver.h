@@ -3,12 +3,13 @@
 
 #include <stdint.h>
 
-#define RGB 3
-
-void writePixel(uint32_t x, uint32_t y, char colour[RGB]);
-void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB]);
-void removeCharFromScreen(char bgColour[RGB]);
+void writePixel(uint32_t x, uint32_t y, int colour);
+void printCharOnScreen(char c, int bgColour, int fontColour);
+void removeCharFromScreen();
 void changeLineOnScreen();
-void clearScreen(char bgColour[RGB]);
+void clearScreen();
+void scrollDownScreen();
+void clearLineOnScreen();
+void initVideoDriver(int BGColour, int FontColour);
 
 #endif

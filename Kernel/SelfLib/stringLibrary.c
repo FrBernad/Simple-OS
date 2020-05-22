@@ -2,19 +2,25 @@
 #include <videoDriver.h>
 #include <stdint.h>
 #include <stringLibrary.h>
+#include <colours.h>
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base);
 
-static char defaultBGColour[RGB] = {0, 0, 0};
-static char defaultFontColour[RGB] = {255, 255, 255};
+static int BGColour = BLACK;
+static int FontColour = WHITE;
 
 void putChar(char c){
-    printCharOnScreen(c,defaultBGColour,defaultFontColour);
+    printCharOnScreen(c,BGColour,FontColour);
+}
+
+void clearLine()
+{
+    clearLineOnScreen();
 }
 
 void deletechar()
 {
-    removeCharFromScreen(defaultBGColour);
+    removeCharFromScreen();
 }
 
 void printString(char * str) {
@@ -41,7 +47,7 @@ void printInt(uint64_t num)
 }
 
 void clear(){
-    clearScreen(defaultBGColour);
+    clearScreen();
 }
 
 void printIntLn(uint64_t num)
@@ -57,16 +63,18 @@ void newLine()
     changeLineOnScreen();
 }
 
-uint8_t stringcmp(char *str1, char *str2, char delimiter)
+uint8_t stringcmp(char *str1, char *str2)
 {
     uint8_t i;
-    for (i = 0; str1[i] != 0 && str2[i] != 0 && str1[i] != delimiter && str2[i] != delimiter; i++)
+    if(*str1==0 || *str2==0){
+        return 0;
+    }
+    for (i = 0; str1[i] != 0 && str2[i] != 0; i++)
     {
         if (str1[i] != str2[i])
             return 0;
     }
-
-    return str1[i] == 0 || str2[i] == 0 || str1[i] == delimiter || str2[i] == delimiter ? 0 : 1;
+    return 1;
 }
 
 static uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)

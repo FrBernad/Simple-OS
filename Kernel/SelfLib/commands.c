@@ -4,13 +4,12 @@
 //uint8_t **commands = {"help", "inforeg", "printmem", "time", "cpuid", "temp", ""};
 
 void help(){
-    printStringLn("Help: prints all available commands");
-    printStringLn("Inforeg: prints the value of all the registers on screen");
-    printStringLn("Printmem: recieves a pointer and makes a memory dump of 32 bytes on screen");
-    printStringLn("Time: prints the current system time on screen");
-    printStringLn("Cpuid: prints the processor brand and model on screen");
-    printStringLn("Temp: prints the current processor temperature on screen");
-
+    printStringLn("These shell commands are defined internally.  Type 'help' to see this list.");
+    printStringLn(" >Inforeg: prints the value of all the registers on screen");
+    printStringLn(" >Printmem: recieves a pointer and makes a memory dump of 32 bytes on screen");
+    printStringLn(" >Time: prints the current system time on screen");
+    printStringLn(" >Cpuid: prints the processor brand and model on screen");
+    printStringLn(" >Temp: prints the current processor temperature on screen");
 }
 
 //todo: print registers, done in assembly

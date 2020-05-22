@@ -3,6 +3,7 @@
 #include <commands.h>
 #include <keys.h>
 #include <stringLibrary.h>
+#include <videoDriver.h>
 
 #define BUFFER_SIZE 50
 
@@ -52,15 +53,19 @@ keyboard_handler()
                 break;
 
             case CAPS_LCK:
+                scrollDownScreen();
                 capsLock = capsLock == 1 ? 0 : 1;
                 break;
 
             case SPACE:
-                buffer[bufferIndx++] = ' ';
+                buffer[bufferIndx++] = 0;
                 putChar(' ');
                 break;
 
             case B_SPACE:
+                if(bufferIndx!=0){
+                    buffer[bufferIndx--]=0;
+                }
                 deletechar();
                 break;
 
@@ -98,11 +103,10 @@ static void checkCommand(){
     uint32_t command,found=0;
     for (command = 0; commands[command].command != 0 && !found; command++)
     {
-        if(stringcmp(commands[command].name,buffer,' ')){
+        if(stringcmp(commands[command].name,buffer)){
             found=1;
         }
     }
-    printInt(command);
     if(found){
         switch(command-1){
             case HELP:

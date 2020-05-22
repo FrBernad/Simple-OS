@@ -1,6 +1,10 @@
 #include <videoDriver.h>
 #include <font.h>
 #include <stringLibrary.h>
+#include <lib.h>
+#include <colours.h>
+
+#define PIXEL_SIZE 3
 struct vbe_mode_info_structure
 {
     uint16_t attributes;  // deprecated, only bit 7 should be of interest to you, and it indicates the mode supports a linear frame buffer.
@@ -42,34 +46,48 @@ struct vbe_mode_info_structure
 
 static struct vbe_mode_info_structure * screen_info = (void *) 0x5C00;
 
-static uint32_t WIDTH = 1024;  //VESA default values
-static uint32_t HEIGHT = 768;
+static uint32_t SCREEN_WIDTH = 1024;  //VESA default values
+static uint32_t SCREEN_HEIGHT = 768;
 
 static uint32_t currentX = 0;
 static uint32_t currentY = 0;
 
+int defaultBGColour;
+int defaultFontColour;
+
 static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
 {
-   return (uint32_t*)((uint64_t)screen_info->framebuffer + 3 * (x + y * WIDTH)); //prque casteo a 64 funciona?
+   return (uint32_t*)((uint64_t)screen_info->framebuffer + PIXEL_SIZE * (x + y * SCREEN_WIDTH)); //prque casteo a 64 funciona?
 }
 
-void writePixel(uint32_t x, uint32_t y, char colour[RGB])
+void initVideoDriver(int BGColour, int FontColour)
+{
+    defaultBGColour = BGColour;
+    defaultFontColour = FontColour;
+}
+
+void writePixel(uint32_t x, uint32_t y, int colour)
 {
     uint32_t * currentFrame = getPixelDataByPosition(x, y);
-    currentFrame[0] = colour[0];
-    currentFrame[1] = colour[1];
-    currentFrame[2] = colour[2];
+    currentFrame[0] = (char)((colour >> 16) & 0xFF);
+    currentFrame[1] = (char)((colour >> 8) & 0xFF);
+    currentFrame[2] = (char)(colour & 0xFF);
 }
+// 0 x XX XX XX XX
 
-void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB])
+void printCharOnScreen(char c, int bgColour, int fontColour)
 {
-    if (currentX != 0 && currentX == WIDTH)
+    if (currentX != 0 && currentX >= SCREEN_WIDTH)
     {
         currentY += CHAR_HEIGHT;
         currentX = 0;
+        if(currentY==SCREEN_HEIGHT){
+            currentY -= CHAR_HEIGHT;
+            scrollDownScreen();
+        }
     }
 
-    if (WIDTH - currentX < CHAR_WIDTH || HEIGHT - currentY < CHAR_HEIGHT){
+    if (SCREEN_WIDTH - currentX < CHAR_WIDTH || SCREEN_HEIGHT - currentY < CHAR_HEIGHT){
         return;
     }
 
@@ -86,11 +104,11 @@ void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB])
             int8_t isFont = (charMap[i] >> (CHAR_WIDTH - j - 1)) & 0x01;
             if (isFont)
             {
-                writePixel(x, y, fontColour);
+                writePixel(x, y, 0xFFFFFF);
             }
             else
             {
-                writePixel(x, y, bgColour);
+                writePixel(x, y, 0x000000);
             }
             x++;
         }
@@ -100,9 +118,26 @@ void printCharOnScreen(char c, char bgColour[RGB], char fontColour[RGB])
     currentX += CHAR_WIDTH;
 }
 
-void removeCharFromScreen(char bgColour[RGB])
+void scrollDownScreen(){
+    memcpy((void *)((uint64_t)screen_info->framebuffer),
+           (void *)((uint64_t)screen_info->framebuffer + SCREEN_WIDTH * CHAR_HEIGHT* PIXEL_SIZE), 
+            PIXEL_SIZE * SCREEN_WIDTH * (SCREEN_HEIGHT-CHAR_HEIGHT));
+    clearLineOnScreen();
+}
+
+void clearLineOnScreen(){
+    for (int i = 0; i < CHAR_HEIGHT; i++)
+    {
+        for (int j = 0; j < SCREEN_WIDTH; j++)
+        {
+            writePixel(j, currentY + i, defaultBGColour);
+        }
+    }
+}
+
+void removeCharFromScreen()
 {
-    if(currentX%WIDTH<CHAR_WIDTH){
+    if(currentX%SCREEN_WIDTH<CHAR_WIDTH){
         return;
     }
 
@@ -114,7 +149,7 @@ void removeCharFromScreen(char bgColour[RGB])
     {
         for (int j = 0; j < CHAR_WIDTH; j++)
         {
-            writePixel(x, y, bgColour);
+            writePixel(x, y, defaultBGColour);
             x++;
         }
         x = currentX;
@@ -125,19 +160,25 @@ void removeCharFromScreen(char bgColour[RGB])
 void changeLineOnScreen(){
     currentY+=CHAR_HEIGHT;
     currentX=0;
+    if (currentY == SCREEN_HEIGHT)
+    {
+        currentY -= CHAR_HEIGHT;
+        scrollDownScreen();
+    }
 }
 
-void clearScreen(char bgColour[RGB]){
-    for (int i = 0; i < HEIGHT; i++)
+void clearScreen(){
+    for (int i = 0; i < SCREEN_HEIGHT; i++)
     {
-        for (int j = 0; j < WIDTH; j++)
+        for (int j = 0; j < SCREEN_WIDTH; j++)
         {
-            writePixel(i, j, bgColour);
+            writePixel(i, j, defaultBGColour);
         }
     }
     currentX = 0;
     currentY = 0;
 }
+
 //00110010
 //each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384
 //in every row max chars = 1024/8=128
