@@ -146,11 +146,25 @@ void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
     }
     
 }
-
+// XXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXX
+// XXXXXXXXXXXXXXXX
 void scrollDownScreen(){
-    memcpy((void *)((uint64_t)screen_info->framebuffer),
-           (void *)((uint64_t)screen_info->framebuffer + SCREEN_WIDTH * CHAR_HEIGHT* PIXEL_SIZE), 
-            PIXEL_SIZE * SCREEN_WIDTH * (SCREEN_HEIGHT-CHAR_HEIGHT));
+    if(currentScreen == &screens[SCREEN_1-1]){
+       // for (int y = 0; y < SCREEN_HEIGHT/CHAR_HEIGHT; y++)
+      //  {
+            memcpy((void *)((uint64_t)screen_info->framebuffer),
+                   (void *)((uint64_t)screen_info->framebuffer + SCREEN_WIDTH * CHAR_HEIGHT * PIXEL_SIZE),
+                   SCREEN_WIDTH/2 * CHAR_HEIGHT * PIXEL_SIZE);
+     //   }
+        // memcpy((void *)((uint64_t)screen_info->framebuffer),
+        //        (void *)((uint64_t)screen_info->framebuffer + SCREEN_WIDTH * CHAR_HEIGHT * PIXEL_SIZE),
+        //        PIXEL_SIZE * SCREEN_WIDTH * (SCREEN_HEIGHT - CHAR_HEIGHT));
+    }
     clearLineOnScreen();
 }
 
