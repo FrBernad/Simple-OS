@@ -61,20 +61,19 @@ void initVideoDriver(int BGColour, int FontColour)
     screen1.defaultFontColour = FontColour;
     screen1.currentX = 0;
     screen1.currentY = 0;
-    screen1.offset = CHAR_WIDTH;
+    screen1.offset = 2 * CHAR_WIDTH;
     screen1.height = SCREEN_HEIGHT;
-    screen1.width = SCREEN_WIDTH / 2 - 2 * CHAR_WIDTH - CHAR_WIDTH;
+    screen1.width = SCREEN_WIDTH / 2 - 3 * CHAR_WIDTH - 2 * CHAR_WIDTH;
 
     screens[0] = screen1;
-
     t_screen screen2;
     screen2.defaultBGColour = BGColour;
     screen2.defaultFontColour = FontColour;
     screen2.currentX = 0;
     screen2.currentY = 0;
-    screen2.offset = SCREEN_WIDTH / 2 + 3 * CHAR_WIDTH;
+    screen2.offset = SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH;
     screen2.height = SCREEN_HEIGHT;
-    screen2.width = SCREEN_WIDTH / 2 - CHAR_WIDTH - 3 * CHAR_WIDTH;
+    screen2.width = SCREEN_WIDTH / 2 - CHAR_WIDTH - 4 * CHAR_WIDTH; //resto lo que agregue de margen en offset para compensar
 
     screens[1] = screen2;
 
@@ -89,7 +88,7 @@ void changeScreen(int screen){
     currentScreen = &screens[screen-1];
 }
 
-void writePixel(uint32_t x, uint32_t y, int colour)
+void writePixel(uint32_t x, uint32_t y, int colour)  //BGR
 {
     uint32_t * currentFrame = getPixelDataByPosition(x, y);
     currentFrame[0] = (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C
@@ -113,10 +112,6 @@ void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
         }
     }
 
-    // if (SCREEN_WIDTH - currentScreen->currentX < CHAR_WIDTH || SCREEN_HEIGHT - currentScreen->currentY < CHAR_HEIGHT){
-    //     return;
-    // }
-
     char * charMap = getCharMap(c);
 
     uint32_t x = currentScreen->currentX + currentScreen->offset, y = currentScreen->currentY;
@@ -125,7 +120,7 @@ void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
     {
         for (int j = 0; j < CHAR_WIDTH; j++)
         {
-            int8_t isFont = (charMap[i] >> (CHAR_WIDTH - j - 1)) & 0x01;
+            int8_t isFont = (charMap[i] >> (CHAR_WIDTH - j - 1)) & 0x01; //-1 para no romper el decalaje, primera vez tengo q decalar 7
             if (isFont)
             {
                 writePixel(x, y, currentScreen->defaultFontColour);
@@ -146,34 +141,40 @@ void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
     }
     
 }
-// XXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXX
-// XXXXXXXXXXXXXXXX
+
 void scrollDownScreen(){
-    if(currentScreen == &screens[SCREEN_1-1]){
-       // for (int y = 0; y < SCREEN_HEIGHT/CHAR_HEIGHT; y++)
-      //  {
-            memcpy((void *)((uint64_t)screen_info->framebuffer),
-                   (void *)((uint64_t)screen_info->framebuffer + SCREEN_WIDTH * CHAR_HEIGHT * PIXEL_SIZE),
-                   SCREEN_WIDTH/2 * CHAR_HEIGHT * PIXEL_SIZE);
-     //   }
-        // memcpy((void *)((uint64_t)screen_info->framebuffer),
-        //        (void *)((uint64_t)screen_info->framebuffer + SCREEN_WIDTH * CHAR_HEIGHT * PIXEL_SIZE),
-        //        PIXEL_SIZE * SCREEN_WIDTH * (SCREEN_HEIGHT - CHAR_HEIGHT));
-    }
-    clearLineOnScreen();
+  if(currentScreen == &screens[SCREEN_1-1]){
+      for (int i = 0; i < CHAR_HEIGHT; i++)
+      {
+          for (int y = 0; y < SCREEN_HEIGHT; y++)
+          {
+              memcpy((void *)((uint64_t)screen_info->framebuffer + y * SCREEN_WIDTH * PIXEL_SIZE),
+                     (void *)((uint64_t)screen_info->framebuffer + (y + 1) * SCREEN_WIDTH * PIXEL_SIZE),
+                     SCREEN_WIDTH * PIXEL_SIZE / 2 - 3 * CHAR_WIDTH);
+          }
+      }
+   }
+   else if (currentScreen == &screens[SCREEN_2 - 1])
+   {
+       for (int i = 0; i < CHAR_HEIGHT; i++)
+       {
+           for (int y = 0; y < SCREEN_HEIGHT; y++)
+           {
+               memcpy((void *)((uint64_t)screen_info->framebuffer + y * SCREEN_WIDTH * PIXEL_SIZE + (SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH) * PIXEL_SIZE ),
+                      (void *)((uint64_t)screen_info->framebuffer + (y + 1) * SCREEN_WIDTH * PIXEL_SIZE + (SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH) * PIXEL_SIZE),
+                      SCREEN_WIDTH * PIXEL_SIZE / 2 - 4 * CHAR_WIDTH * PIXEL_SIZE);
+           }
+       }
+   }
+   clearLineOnScreen();
 }
 
 void clearLineOnScreen(){
-    for (int i = 0; i < CHAR_HEIGHT; i++)
+    for (int y = 0; y < currentScreen->height ; y++)
     {
-        for (int j = 0; j < SCREEN_WIDTH; j++)
+        for (int x = 0; x < currentScreen->width ; x++)
         {
-            writePixel(j, currentScreen->currentY + i, currentScreen->defaultBGColour);
+            writePixel(x+currentScreen->offset, currentScreen->currentY + y, currentScreen->defaultBGColour);
         }
     }
 }
@@ -190,18 +191,7 @@ void removeCharFromScreen(){
 
     currentScreen->currentX -= CHAR_WIDTH;
 
-    uint32_t x = currentScreen->currentX + currentScreen->offset, y = currentScreen->currentY;
-
-    for (int i = 0; i < CHAR_HEIGHT; i++)
-    {
-        for (int j = 0; j < CHAR_WIDTH; j++)
-        {
-            writePixel(x, y, currentScreen->defaultBGColour);
-            x++;
-        }
-        x = currentScreen->currentX + currentScreen->offset;
-        y++;
-    }
+    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
 }
 
 void changeLineOnScreen(){
@@ -235,7 +225,7 @@ static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
 static void separateMainScreen(){
     for (int y = 0; y < SCREEN_HEIGHT; y++)
     {
-        for (int x = 0; x < 2*CHAR_WIDTH; x++)
+        for (int x = 0; x < 2 * CHAR_WIDTH; x++)
         {
             writePixel(SCREEN_WIDTH/2-CHAR_WIDTH+x,y,WHITE);
         }

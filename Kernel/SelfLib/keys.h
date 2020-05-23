@@ -13,7 +13,10 @@
 #define CAPS_LCK 0x3A
 #define ENTER 0x1C
 #define L_CONTROL 0x1D
+#define EQUAL 0x0D
 
 #define IS_LETTER(c) (c >= 'a' && c <= 'z' ? 1 : 0)
+#define IS_OPPERAND(c) (c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '%' || c == '(' || c == ')' ? 1 : 0)
+#define IS_NUMBER(c) (c >= '0' && c <= '9' ? 1 : 0)
 
 #endif
