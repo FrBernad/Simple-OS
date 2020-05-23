@@ -73,7 +73,7 @@ void initVideoDriver(int BGColour, int FontColour)
     screen2.currentY = 0;
     screen2.offset = SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH;
     screen2.height = SCREEN_HEIGHT;
-    screen2.width = SCREEN_WIDTH / 2 - CHAR_WIDTH - 4 * CHAR_WIDTH; //resto lo que agregue de margen en offset para compensar
+    screen2.width = SCREEN_WIDTH / 2 - 2 * CHAR_WIDTH - 4 * CHAR_WIDTH; //resto lo que agregue de margen en offset para compensar
 
     screens[1] = screen2;
 
@@ -180,6 +180,8 @@ void clearLineOnScreen(){
 }
 
 void removeCharFromScreen(){
+    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
+
     if (currentScreen->currentX == 0)
     {
         if(currentScreen->currentY == 0){
@@ -191,9 +193,8 @@ void removeCharFromScreen(){
 
     currentScreen->currentX -= CHAR_WIDTH;
 
-    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
+    printCharOnScreen(' ', BLACK, WHITE, 0);//remove char
 }
-
 void changeLineOnScreen(){
     printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
     currentScreen->currentY+=CHAR_HEIGHT;
