@@ -72,9 +72,9 @@ void initVideoDriver(int BGColour, int FontColour)
     screen2.defaultFontColour = FontColour;
     screen2.currentX = 0;
     screen2.currentY = 0;
-    screen2.offset = SCREEN_WIDTH / 2 + 2 * CHAR_WIDTH;
+    screen2.offset = SCREEN_WIDTH / 2 + 3 * CHAR_WIDTH;
     screen2.height = SCREEN_HEIGHT;
-    screen2.width = SCREEN_WIDTH / 2 - CHAR_WIDTH - 2 * CHAR_WIDTH;
+    screen2.width = SCREEN_WIDTH / 2 - CHAR_WIDTH - 3 * CHAR_WIDTH;
 
     screens[1] = screen2;
 
