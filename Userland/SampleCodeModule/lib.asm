@@ -1,8 +1,8 @@
-GLOBAL
-GLOBAL
-GLOBAL
-GLOBAL
-GLOBAL
+GLOBAL putchar
+GLOBAL printString
+GLOBAL printNum
+GLOBAL stringcmp
+GLOBAL printmem
 GLOBAL
 GLOBAL
 GLOBAL
@@ -85,3 +85,9 @@ temp:
     leave
     ret
 
+    pop rax
+    leave
+    
+    ret
+    
+    

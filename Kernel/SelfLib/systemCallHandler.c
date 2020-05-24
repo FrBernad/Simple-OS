@@ -15,7 +15,7 @@ static void sys_help();
 static void sys_inforeg();
 static void sys_printmem(uint64_t mem);
 static void sys_time();
-static void sys_cpuid();
+static void sys_cpuInfo();
 static void sys_temp();
 static void sys_clearLine();
 static void sys_deletechar();
@@ -25,7 +25,7 @@ static void sys_newLine();
 static uint8_t sys_stringcmp(char *str1, char *str2);
 
 // static void (*syscalls[MAX_FUNCS])() = {&sys_putchar, &sys_printString, &sys_printNum, &sys_deleteChar,&sys_clear, 
-// &sys_clearLine, &sys_newLine, &sys_stringcmp, &sys_help, &sys_inforeg, &sys_printmem, &sys_time, &sys_cpuid, &sys_temp, &sys_getchar};
+// &sys_clearLine, &sys_newLine, &sys_stringcmp, &sys_help, &sys_inforeg, &sys_printmem, &sys_time, &sys_cpuInfo, &sys_temp, &sys_getchar};
 
 //static void (*syscalls[MAX_FUNCS])(registers * r) = {0};
 
@@ -77,7 +77,7 @@ void systemCallHandler(registers *r) {
                         break;
 
                   case 13:
-                        sys_cpuid();
+                        sys_cpuInfo();
                         break;
 
                   case 14:
@@ -133,7 +133,7 @@ static void sys_time() {
 }
 
 //todo: shows processor model and brand
-static void sys_cpuid() {
+static void sys_cpuInfo() {
       char buffer[15];
       sys_printString(" > CPU Vendor: ",0);
       sys_printString(cpuVendor(buffer),1);

@@ -27,7 +27,7 @@ void printmem(uint64_t mem);
 void time();
 
 //todo: shows processor model and brand
-void cpuid();
+void cpuInfo();
 
 //todo: shows processor temp
 void temp();
