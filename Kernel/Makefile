@@ -3,17 +3,15 @@ include Makefile.inc
 KERNEL=kernel.bin
 SOURCES=$(wildcard *.c)
 SOURCES_ASM=$(wildcard asm/*.asm)
-SOURCES_EXCEPCIONES=$(wildcard IDT/*.c)
-SOURCES_EXCEPCIONES_ASM=$(wildcard IDT/*.asm)
-SOURCES_SELF_LIB_ASM=$(wildcard SelfLib/*.asm)
-SOURCES_SELF_LIB=$(wildcard SelfLib/*.c)
+SOURCES_IDT=$(wildcard IDT/*.c)
+SOURCES_DRIVERS=$(wildcard drivers/*.c)
+SOURCES_UTILS=$(wildcard utils/*.c)
 
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
-OBJECTS_EXCEPCIONES=$(SOURCES_EXCEPCIONES:.c=.o)
-OBJECTS_EXCEPCIONES_ASM=$(SOURCES_EXCEPCIONES_ASM:.asm=.o)
-OBJECTS_SELF_LIB=$(SOURCES_SELF_LIB:.c=.o)
-OBJECTS_SELF_LIB_ASM=$(SOURCES_SELF_LIB_ASM:.asm=.o)
+OBJECTS_IDT=$(SOURCES_IDT:.c=.o)
+OBJECTS_DRIVERS=$(SOURCES_DRIVERS:.c=.o)
+OBJECTS_UTILS=$(SOURCES_UTILS:.c=.o)
 
 LOADERSRC=loader.asm
 
@@ -22,11 +20,11 @@ STATICLIBS=
 
 all: $(KERNEL)
 
-$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_EXCEPCIONES) $(OBJECTS_EXCEPCIONES_ASM) $(OBJECTS_SELF_LIB) $(OBJECTS_SELF_LIB_ASM)
+$(KERNEL): $(LOADEROBJECT) $(OBJECTS) $(STATICLIBS) $(OBJECTS_ASM) $(OBJECTS_IDT) $(OBJECTS_DRIVERS) $(OBJECTS_UTILS)
 	$(LD) $(LDFLAGS) -T kernel.ld -o $@ $^
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -I./IDT -I./SelfLib -c $< -o $@
+	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
 
 %.o : %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
@@ -35,6 +33,6 @@ $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	rm -rf asm/*.o *.o *.bin IDT/*.o SelfLib/*.o
+	rm -rf asm/*.o *.o *.bin utils/*.o IDT/*.o drivers/*.o
 
 .PHONY: all clean

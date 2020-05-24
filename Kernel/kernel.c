@@ -1,6 +1,5 @@
 #include <stdint.h>
 #include <string.h>
-#include <stringLibrary.h>
 #include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
@@ -8,6 +7,7 @@
 #include <keyboardDriver.h>
 #include <idtLoader.h>
 #include <colours.h>
+#include <systemCalls.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -90,7 +90,6 @@ int main()
 {	
 	load_idt();
 	initVideoDriver(BLACK,WHITE);
-	initKeyboard();
 	
 	ncPrint("[Kernel Main]");
 	ncNewline();
