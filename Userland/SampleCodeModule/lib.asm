@@ -15,75 +15,70 @@ GLOBAL temp
 
 section .text
 
-help:
+putchar:
     push rbp
     mov rbp, rsp
 
     push rax
 
-    mov rax, 9
+    mov rax,0
     int 80h
 
     pop rax
-
     leave
+
     ret
 
-inforeg:
+printString:
     push rbp
     mov rbp, rsp
 
     push rax
 
-    mov rax, 10
+    mov rax,1
     int 80h
 
     pop rax
-
     leave
+    
     ret
-
-time:
+    
+printNum:
     push rbp
     mov rbp, rsp
 
     push rax
 
-    mov rax, 12
+    mov rax,2
     int 80h
 
     pop rax
-
     leave
+    
     ret
-
-cpuInfo:
+    
+stringcmp:
     push rbp
     mov rbp, rsp
 
     push rax
 
-    mov rax, 13
+    mov rax,8
     int 80h
 
     pop rax
-
     leave
+    
     ret
-
-temp:
+    
+printmem:
     push rbp
     mov rbp, rsp
 
     push rax
 
-    mov rax, 14
+    mov rax,0
     int 80h
-
-    pop rax
-
-    leave
-    ret
 
     pop rax
     leave
