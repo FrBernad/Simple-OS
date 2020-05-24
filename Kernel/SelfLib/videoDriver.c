@@ -54,33 +54,31 @@ static uint32_t SCREEN_HEIGHT = 768;
 static t_screen screens[MAX_SCREENS];
 static t_screen * currentScreen;
 
-void initVideoDriver(int BGColour, int FontColour)
-{
-    t_screen screen1;
-    screen1.defaultBGColour = BGColour;
-    screen1.defaultFontColour = FontColour;
-    screen1.currentX = 0;
-    screen1.currentY = 0;
-    screen1.offset = 2 * CHAR_WIDTH;
-    screen1.height = SCREEN_HEIGHT;
-    screen1.width = SCREEN_WIDTH / 2 - 3 * CHAR_WIDTH - 2 * CHAR_WIDTH;
+void initVideoDriver(int BGColour, int FontColour) {
+      t_screen screen1;
+      screen1.defaultBGColour = BGColour;
+      screen1.defaultFontColour = FontColour;
+      screen1.currentX = 0;
+      screen1.currentY = 0;
+      screen1.offset = 2 * CHAR_WIDTH;
+      screen1.height = SCREEN_HEIGHT;
+      screen1.width = SCREEN_WIDTH / 2 - 3 * CHAR_WIDTH - 2 * CHAR_WIDTH;
 
-    screens[0] = screen1;
-    t_screen screen2;
-    screen2.defaultBGColour = BGColour;
-    screen2.defaultFontColour = FontColour;
-    screen2.currentX = 0;
-    screen2.currentY = 0;
-    screen2.offset = SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH;
-    screen2.height = SCREEN_HEIGHT;
-    screen2.width = SCREEN_WIDTH / 2 - 2 * CHAR_WIDTH - 4 * CHAR_WIDTH; //resto lo que agregue de margen en offset para compensar
+      screens[0] = screen1;
+      t_screen screen2;
+      screen2.defaultBGColour = BGColour;
+      screen2.defaultFontColour = FontColour;
+      screen2.currentX = 0;
+      screen2.currentY = 0;
+      screen2.offset = SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH;
+      screen2.height = SCREEN_HEIGHT;
+      screen2.width = SCREEN_WIDTH / 2 - 2 * CHAR_WIDTH - 4 * CHAR_WIDTH;  //resto lo que agregue de margen en offset para compensar
 
-    screens[1] = screen2;
+      screens[1] = screen2;
 
-    separateMainScreen();
+      separateMainScreen();
 
-    currentScreen = &screens[1];
-
+      currentScreen = &screens[1];
 }
 
 void changeScreen(int screen){
@@ -195,6 +193,7 @@ void removeCharFromScreen(){
 
     printCharOnScreen(' ', BLACK, WHITE, 0);//remove char
 }
+
 void changeLineOnScreen(){
     printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
     currentScreen->currentY+=CHAR_HEIGHT;

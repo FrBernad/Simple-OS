@@ -13,17 +13,8 @@ Por ejemplo, para obtener el los segundos, habría que ejecutar las siguientes l
 
 */
 #include <clock.h>
-
-static uint8_t BSDToInt(uint8_t num);
-
+#include <utils.h>
 
 uint8_t getDecimalTimeInfo(uint8_t info){
     return BSDToInt(getBSDTimeInfo(info));
-}
-
-static uint8_t BSDToInt(uint8_t num){
-    uint8_t low = num & 0x0F;
-    uint8_t high = num & 0xF0;
-    high >>= 4;
-    return high*10+low;
 }
