@@ -9,6 +9,6 @@ void * memcpy(void * destination, const void * source, uint64_t length);
 char * cpuVendor(char * result);
 uint64_t cpuModel();
 uint64_t cpuTemp();
-char * getMem(uint64_t mem);
+uint8_t sys_getMem(uint64_t mem);
 
 #endif

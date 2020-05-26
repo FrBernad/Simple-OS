@@ -8,28 +8,35 @@ typedef struct{
     char * name;
 }t_command;
 
-#define HELP 0
-#define INFOREG 1
-#define PRINTMEM 2
-#define TIME 3
-#define CPUINFO 4
-#define TEMP 5
+typedef enum {
+      HELP = 0,
+      INFOREG = 1,
+      PRINTMEM = 2,
+      TIME = 3,
+      CPUINFO = 4,
+      CPUTEMP = 5,
+      CHANGEUSERNAME = 6
+} t_commandID;
 
+//prints commands man
 void help();
 
-//todo: print registers, done in assembly
+//print registers, done in assembly
 void inforeg();
 
-//todo: recieves memory direction and prints 32 bytes after
+//recieves memory direction and prints 32 bytes after
 void printmem(uint64_t mem);
 
-//todo: desplays system time
+//displays system time
 void time();
 
-//todo: shows processor model and brand
+//shows processor model and brand
 void cpuInfo();
 
-//todo: shows processor temp
-void temp();
+//shows processor temp
+void cpuTemp();
+
+//change username in shell
+void changeUsername(char * newUsername);
 
 #endif

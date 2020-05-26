@@ -1,7 +1,7 @@
 GLOBAL cpuVendor
 GLOBAL cpuModel
 GLOBAL cpuTemp
-GLOBAL getMem
+GLOBAL sys_getMem
 
 section .text
 	
@@ -33,7 +33,6 @@ cpuVendor:
 	ret
 
 cpuModel:
-
 	push rbp
 	mov rbp, rsp
 
@@ -58,52 +57,27 @@ cpuTemp:
 
 	push rcx
 
+	mov rax,0
 	mov rcx,0
-	mov rcx, 0x1B1
-	rdmsr
-;	shr rax,15
+	mov ecx, 0x19C ;codigo que corresponde a THERMAL STATUS
+	rdmsr  ;me deja en eax la parte baja del msr solicitado, que en este caso es la unica que me interesa
+
+;	shr rax,15                         ;shifteo que usaria para quedarme con los bits que me importan
 ;	and rax,0x7 ;0x0000000000000007   
 
 	pop rcx
-
+							
 	mov rsp, rbp
 	pop rbp
-	ret
+	ret             ;se devuelve en eax el valor cargado por rdmsr
 
-getMem:
+sys_getMem:
 	push rbp
 	mov rbp, rsp
 
-	push rcx
-	push rdx
-
-	mov rcx,0
-	mov rdx,0
-	mov rax,mem
-
-.loopStart:
-	cmp rcx,32
-	je .loopEnd
-
-	mov dl,[rdi]
-	mov byte [rax], dl
-
-	inc rcx
-	inc rdi
-	inc rax
-
-	jmp  .loopStart
-.loopEnd:
-	
-	pop rdx
-	pop rcx
-
-	mov rax,mem
+	mov rax,0
+	mov al,[rdi]
 
 	mov rsp, rbp
 	pop rbp
 	ret
-
-
-section .bss
-	mem resb 32

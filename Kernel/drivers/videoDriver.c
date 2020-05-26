@@ -81,8 +81,7 @@ void initVideoDriver(int BGColour, int FontColour) {
 }
 
 void changeScreen(int screen){
-    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
-    currentScreen = &screens[screen-1];
+    currentScreen = &screens[screen];
 }
 
 void writePixel(uint32_t x, uint32_t y, int colour)  //BGR
@@ -140,7 +139,7 @@ void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
 }
 
 void scrollDownScreen(){
-  if(currentScreen == &screens[SCREEN_1-1]){
+  if(currentScreen == &screens[SCREEN_0]){
       for (int i = 0; i < CHAR_HEIGHT; i++)
       {
           for (int y = 0; y < SCREEN_HEIGHT; y++)
@@ -151,7 +150,7 @@ void scrollDownScreen(){
           }
       }
    }
-   else if (currentScreen == &screens[SCREEN_2 - 1])
+   else if (currentScreen == &screens[SCREEN_1])
    {
        for (int i = 0; i < CHAR_HEIGHT; i++)
        {
@@ -177,8 +176,6 @@ void clearLineOnScreen(){
 }
 
 void removeCharFromScreen(){
-    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
-
     if (currentScreen->currentX == 0)
     {
         if(currentScreen->currentY == 0){
@@ -194,7 +191,6 @@ void removeCharFromScreen(){
 }
 
 void changeLineOnScreen(){
-    printCharOnScreen(' ', BLACK, WHITE, 0); //for timer tick
     currentScreen->currentY+=CHAR_HEIGHT;
     currentScreen->currentX=0;
     if (currentScreen->currentY == currentScreen->height)

@@ -3,14 +3,15 @@
 
 #include <stdint.h>
 
+void printString(char* str);
+void printStringLn(char* str);
+void printInt(uint64_t num);
+void printHex(uint64_t num);
 void putchar(char c);
+void staticputchar(char c);
 char getchar();
-void printString(char* str, uint8_t newLine);
-void printNum(uint64_t num, uint8_t base);
-void clear();
-void clearLine();
-void newLine();
 void deletechar();
-uint8_t stringcmp(char* str1, char* str2);
+void newLine();
+int strlen(char* str);
 
 #endif

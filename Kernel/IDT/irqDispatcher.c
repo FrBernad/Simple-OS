@@ -1,4 +1,4 @@
-#include <time.h>
+#include <timerTick.h>
 #include <keyboardDriver.h>
 #include <stdint.h>
 
@@ -14,9 +14,9 @@ void irqDispatcher(uint64_t irq)
 }
 
 static void int_20() {
-	timer_handler();
+	timerHandler();
 }
 
 static void int_21(){
-	keyboard_handler();
+	keyboardHandler();
 }

@@ -4,8 +4,11 @@
 #include <stdint.h>
 
 #define MAX_SCREENS 2
-#define SCREEN_1 1
-#define SCREEN_2 2
+
+typedef enum {
+      SCREEN_0 = 0,
+      SCREEN_1 = 1
+} t_screenID;
 
 typedef struct
 {

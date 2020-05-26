@@ -1,17 +1,6 @@
-#include <stringLib.h>
-#include <shell.h>
-
-/* sampleCodeModule.c */
+#include <appManager.h>
 
 int main() {
-
-while (1){
-      char c = getchar();
-      if (c != 0) {
-            putchar(c);
-      }
- }
-//	runShell();
-	
+      startApplication();
 return 0;
 }

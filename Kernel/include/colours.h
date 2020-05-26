@@ -2,8 +2,10 @@
 #define COLOURS_H
 
 #define RGB 3
-#define BLACK 0x000000
-#define WHITE 0xFFFFFF
-#define RED 0x00FFFF
+typedef enum {
+      BLACK = 0x000000,
+      WHITE = 0xFFFFFF,
+      RED = 0x00FFFF
+}t_colour;
 
 #endif

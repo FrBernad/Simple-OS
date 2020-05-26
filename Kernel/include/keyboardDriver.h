@@ -1,9 +1,10 @@
 #ifndef KEYBOARD_DRIVER_H
 #define KEYBOARD_DRIVER_H
 
-#include <stdint.h>
+#include <applications.h>
 
-void keyboard_handler();
-char getChar();
+void keyboardHandler();
+char getchar();
+void changeBuffer(t_applicationID app);
 
 #endif
