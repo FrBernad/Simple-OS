@@ -16,6 +16,8 @@ GLOBAL _irq05Handler
 GLOBAL _syscallHandler
 
 GLOBAL _exception0Handler
+GLOBAL _exception6Handler
+
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
@@ -84,6 +86,30 @@ SECTION .text
 	iretq
 %endmacro
 
+_syscallHandler:
+	push    rbp
+    mov     rbp, rsp
+
+	push rdi
+
+	mov [registers],rax
+	mov [registers+8],rdi
+	mov [registers+16],rsi
+	mov [registers+24],rdx
+	mov [registers+32],rdx
+	mov [registers+40],r10
+	mov [registers+48],r8
+	mov [registers+56],r9
+	mov rdi,registers
+	; push rcx
+	; mov rcx,rax
+	; push r10
+	call sysCallDispatcher
+	; pop r10
+	; pop rcx
+	pop rdi
+	leave
+	iretq
 
 _hlt:
 	sti
@@ -120,29 +146,6 @@ picSlaveMask:
 ;necesito
 ;%rax	%rdi	%rsi	%rdx	%r10	%r8	   %r9
 ;syscalls 
-_syscallHandler:
-	push    rbp
-    mov     rbp, rsp
-
-	push rdi
-
-	mov [registers],rax
-	mov [registers+8],rdi
-	mov [registers+16],rsi
-	mov [registers+24],rdx
-	mov [registers+32],r10
-	mov [registers+40],r8
-	mov [registers+48],r9
-	mov rdi,registers
-	; push rcx
-	; mov rcx,rax
-	; push r10
-	call sysCallDispatcher
-	; pop r10
-	; pop rcx
-	pop rdi
-	leave
-	iretq
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
@@ -173,6 +176,9 @@ _irq05Handler:
 _exception0Handler:
 	exceptionHandler 0
 
+_exception6Handler:
+	exceptionHandler 6
+
 haltcpu:
 	cli
 	hlt
@@ -187,6 +193,7 @@ SECTION .bss
 		rrdi resq 1
 		rrsi resq 1
 		rrdx resq 1
+		rrcx resq 1
 		rr10 resq 1
 		rr8 resq 1
 		rr9 resq 1

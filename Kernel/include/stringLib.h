@@ -11,7 +11,6 @@ void printInt(uint64_t num);
 void printHex(uint64_t num);
 void putchar(char c);
 void staticputchar(char c);
-char getchar();
 void deletechar();
 int strlen(char* str);
 

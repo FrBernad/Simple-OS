@@ -7,8 +7,6 @@ GLOBAL sys_write
 GLOBAL sys_staticwrite
 GLOBAL sys_getchar
 GLOBAL sys_deletechar
-GLOBAL sys_newLine
-GLOBAL sys_clearLine
 GLOBAL sys_clear
 GLOBAL sys_ticksElapsed
 GLOBAL sys_changeResources
@@ -143,7 +141,7 @@ pop rbp
 
 ret
 
-sys_newLine:
+sys_clear:
 push rbp
 mov rbp, rsp
 
@@ -159,43 +157,11 @@ pop rbp
 
 ret
 
-sys_clearLine:
-push rbp
-mov rbp, rsp
-
-push rax
-
-mov rax,10
-int 80h
-
-pop rax
-
-mov rsp, rbp
-pop rbp
-
-ret
-
-sys_clear:
-push rbp
-mov rbp, rsp
-
-push rax
-
-mov rax,11
-int 80h
-
-pop rax
-
-mov rsp, rbp
-pop rbp
-
-ret
-
 sys_ticksElapsed:
 push rbp
 mov rbp, rsp
 
-mov rax,12
+mov rax,10
 int 80h
 
 mov rsp, rbp
@@ -210,7 +176,7 @@ mov rbp, rsp
 
 push rax
 
-mov rax,13
+mov rax,11
 int 80h
 
 pop rax

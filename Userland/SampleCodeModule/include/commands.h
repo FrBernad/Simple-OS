@@ -3,40 +3,41 @@
 
 #include <stdint.h>
 
+#define COMMANDS 10
+#define MAX_ARGS 4
 typedef struct{
-    void(*command)();
+    void(*command)(int,char **);
     char * name;
 }t_command;
 
-typedef enum {
-      HELP = 0,
-      INFOREG = 1,
-      PRINTMEM = 2,
-      TIME = 3,
-      CPUINFO = 4,
-      CPUTEMP = 5,
-      CHANGEUSERNAME = 6
-} t_commandID;
-
 //prints commands man
-void help();
+void help(int argc,char ** args);
 
 //print registers, done in assembly
-void inforeg();
+void inforeg(int argc,char ** args);
 
 //recieves memory direction and prints 32 bytes after
-void printmem(uint64_t mem);
+void printmem(int argc,char ** args);
 
 //displays system time
-void time();
+void time(int argc,char ** args);
 
 //shows processor model and brand
-void cpuInfo();
+void cpuInfo(int argc,char ** args);
 
 //shows processor temp
-void cpuTemp();
+void cpuTemp(int argc,char ** args);
 
 //change username in shell
-void changeUsername(char * newUsername);
+void changeUsername(int argc,char ** args);
+
+//check zero exception
+void checkZeroException(int argc,char ** args);
+
+//check invalid op exception
+void checkInvalidOpcodeException(int argc, char **args);
+
+//shows arguments
+void showArgs(int argc, char **args);
 
 #endif

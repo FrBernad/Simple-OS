@@ -7,7 +7,12 @@
 #include <systemCalls.h>
 #include <utils.h>
 
-void help() {
+void help(int argc, char** args) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
       printStringLn("These shell commands are defined internally.  Type 'help' to see this list.");
       printStringLn(" >inforeg: prints the value of all the registers on screen");
       printStringLn(" >printmem: recieves a pointer and makes a memory dump of 32 bytes on screen");
@@ -15,10 +20,15 @@ void help() {
       printStringLn(" >cpuid: prints the processor brand and model on screen");
       printStringLn(" >temp: prints the current processor temperature on screen");
       printStringLn(" >changeUsername: changes the shell prompt username");
-      newLine();
+      putchar('\n');
 }
 
-void inforeg() {
+void inforeg(int argc, char** args) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
       t_register registers[REGISTERS];
       sys_inforeg(registers);
       for (int i = 0; i < REGISTERS; i++) {
@@ -26,12 +36,17 @@ void inforeg() {
             printString(registers[i].name);
             putchar(':');
             printHex(registers[i].data);
-            newLine();
+            putchar('\n');
       }
-      newLine();
+      putchar('\n');
 }
 
-void time() {
+void time(int argc, char** args) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
       uint8_t hours = sys_RTCTime(HOURS);
       uint8_t mins = sys_RTCTime(MINUTES);
       uint8_t secs = sys_RTCTime(SECONDS);
@@ -41,11 +56,16 @@ void time() {
       printInt(mins);
       putchar(':');
       printInt(secs);
-      newLine();
-      newLine();
+      putchar('\n');
+      putchar('\n');
 }
 
-void cpuInfo() {
+void cpuInfo(int argc, char** args) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
       char cpuVendor[14] = {0};
       t_cpuInfo cpuInfo = {cpuVendor, 0};
       sys_cpuInfo(&cpuInfo);
@@ -53,11 +73,25 @@ void cpuInfo() {
       printStringLn(cpuInfo.cpuVendor);
       printString(" > CPU model: ");
       printInt(cpuInfo.model);
-      newLine();
-      newLine();
+      putchar('\n');
+      putchar('\n');
 }
 
-void printmem(uint64_t mem) {
+void printmem(int argc, char** args) {
+      if (argc != 1) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
+
+      int error = 0;
+      uint64_t mem = strToInt(args[0], &error);
+      if (error) {
+            printStringLn("Invalid argument for function printmem (must be an integer).");
+            putchar('\n');
+            return;
+      }
+
       char byteStr[3] = {'0', '0', 0};
       uint8_t byte;
       printStringLn(" >Data dump:");
@@ -77,12 +111,51 @@ void printmem(uint64_t mem) {
             byteStr[1] = '0';
             byteStr[2] = 0;
       }
-      newLine();
+      putchar('\n');
 }
 
-void cpuTemp() {
+void cpuTemp(int argc, char** args) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
       printString("CPU temp:  ");
       printInt(sys_temp());
       printStringLn("C");
-      newLine();
+      putchar('\n');
+}
+
+void checkZeroException(int argc, char** args) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
+      int a = 0;
+      int b = 20 / a;
+      if (b == 0) {
+      }
+}
+
+void checkInvalidOpcodeException(int argc, char** args) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
+      int a = 0;
+      int b = 20 / a;
+      if (b == 0) {
+      }
+}
+
+void showArgs(int argc, char** args){
+      for (int i = 0; i < argc && i < MAX_ARGS; i++)
+      {
+            printString("arg[");
+            printInt(i);
+            printString("]=");
+            printStringLn(args[i]);
+      }
 }

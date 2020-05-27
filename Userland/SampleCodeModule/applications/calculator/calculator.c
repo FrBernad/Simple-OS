@@ -1,30 +1,31 @@
 #include <appManager.h>
 #include <buffer.h>
-#include <systemCalls.h>
 #include <calculator.h>
 #include <keys.h>
 #include <stringLib.h>
+#include <systemCalls.h>
 #include <utils.h>
+#include <expressionAnalyzer.h>
 
+static void initCalculator();
 static void calcText();
 
 static t_buffer calcBuffer = {{0}, 0};
-
-static int started = 0, availableRemoves = 0, blink = 1;
+static int blink = 1;
 
 void runCalculator() {
-      if (!started) {
-            calcText();
-            started = 1;
-      }
+      initCalculator();
       while (1) {
+            if (sys_ticksElapsed() % 12 == 0) {
+                  blinkCursor(&blink);
+            }
             char c = getchar();
             if (c != 0) {
+                  staticputchar(' ');  //remove blink
                   switch (c) {
                         case CHANGE_SCREEN_0:
                               break;
                         case CHANGE_SCREEN_1:
-                              staticputchar(' ');  //for timer tick
                               changeApplication(shell);
                               break;
                         case EQUAL:
@@ -32,20 +33,15 @@ void runCalculator() {
                               evaluate(calcBuffer.buffer);
                               cleanBuffer(&calcBuffer);
                               calcText();
-                              staticputchar(' ');  //for timer tick
-                              availableRemoves = 0;
                               break;
                         case CLEAR_SCREEN:
                               sys_clear();
                               cleanBuffer(&calcBuffer);
                               calcText();
-                              availableRemoves = 0;
                               break;
                         case B_SPACE:
-                              if (availableRemoves != 0) {
+                              if (calcBuffer.index > 0) {
                                     calcBuffer.buffer[--calcBuffer.index] = 0;  //i pongo a-- se caga pq accedo a index=BUFFER_SIZE
-                                    availableRemoves--;
-                                    staticputchar(' ');  //for timer tick
                                     deletechar();
                               }
                               break;
@@ -55,26 +51,26 @@ void runCalculator() {
                                     if (IS_NUMBER(c) || IS_OPPERAND(c)) {
                                           calcBuffer.buffer[calcBuffer.index++] = c;
                                           putchar(c);
-                                          availableRemoves++;
                                     }
                               }
-                  }
-            } else {
-                  if (sys_ticksElapsed() % 9 == 0) {
-                        if (blink) {
-                              staticputchar('|');
-                              blink = 0;
-                        } else {
-                              staticputchar(' ');
-                              blink = 1;
-                        }
                   }
             }
       }
 }
 
 void evaluate(char* expression) {
-      newLine();
+      // int value, error = 0;
+      // //value = getValue(expression, &error);
+      // if (!error) {
+      //     //  printInt(value);
+      // } else {
+      //       printStringLn("Invalid expression");
+      // }
+      // putchar('\n');
+}
+
+static void initCalculator(){
+      calcText();
 }
 
 static void calcText() {

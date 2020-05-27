@@ -7,6 +7,7 @@
 #include <RTCTime.h>
 #include <cpuInfo.h>
 #include <stdint.h>
+#include <colours.h>
 
 #define SYSCALLS 16
 
@@ -16,16 +17,14 @@ uint8_t sys_RTCTime(t_timeInfo tInfo);
 void sys_cpuInfo(t_cpuInfo * cpuInfo);
 uint8_t sys_temp();
 
-void sys_write(char * string, uint8_t lenght);
-void sys_staticwrite(char * string, uint8_t lenght);
+void sys_write(char* string, uint8_t lenght, t_colour bgColour, t_colour fontColour);
+void sys_staticwrite(char* string, uint8_t lenght, t_colour bgColour, t_colour fontColour);
 char sys_getchar();
 void sys_deletechar();
-void sys_newLine();
-void sys_clearLine();
 void sys_clear();
 
 int sys_ticksElapsed();
 
-void sys_changeResources(t_application * app);
+void sys_changeResources(const t_application* app);
 
 #endif
