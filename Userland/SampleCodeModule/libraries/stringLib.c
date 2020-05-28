@@ -35,6 +35,12 @@ void printInt(uint64_t num) {
       printString(buffer);
 }
 
+// void printDouble(double num){
+//       char buffer[10];
+//       ftoa(num,buffer,4);
+//       printString(buffer);
+// }
+
 void clear() {
       sys_clear();
 }

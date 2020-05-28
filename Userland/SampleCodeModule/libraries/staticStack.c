@@ -3,14 +3,14 @@
 
 void pop(t_stack* stack, void* elem) {
       if (!(isEmpty(stack))) {
-            memcpy(elem, stack->stack + stack->size - 1, stack->dataSize); 
+            memcpy(elem, (void*)((uint64_t)stack->stack + ((stack->size-1) * stack->dataSize)), stack->dataSize);
             stack->size--;
       }
 }
 
 void push(t_stack* stack, void* elem) {
       if (stack->size < stack->dim) {
-            memcpy(stack->stack + stack->size, elem, stack->dataSize);
+            memcpy((void*)((uint64_t)stack->stack + (stack->size * stack->dataSize)), elem, stack->dataSize);
             stack->size++;
       }
 }
@@ -21,6 +21,6 @@ int isEmpty(t_stack* stack) {
 
 void peek(t_stack* stack, void* elem) {
       if (!(isEmpty(stack))) {
-            memcpy(elem, stack->stack + stack->size, stack->dataSize);
+            memcpy(elem, (void*)((uint64_t)stack->stack + (stack->size * stack->dataSize)), stack->dataSize);
       }
 }

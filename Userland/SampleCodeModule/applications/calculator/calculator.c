@@ -11,10 +11,13 @@ static void initCalculator();
 static void calcText();
 
 static t_buffer calcBuffer = {{0}, 0};
-static int blink = 1;
+static int blink = 1, started = 0;
 
 void runCalculator() {
-      initCalculator();
+      if (!started) {
+            initCalculator();
+            started = 1;
+      }
       while (1) {
             if (sys_ticksElapsed() % 12 == 0) {
                   blinkCursor(&blink);
@@ -48,7 +51,7 @@ void runCalculator() {
 
                         default:
                               if (calcBuffer.index < BUFFER_SIZE) {
-                                    if (IS_NUMBER(c) || IS_OPPERAND(c)) {
+                                    if (IS_DIGIT(c) || IS_OPERAND(c) || c==SPACE) {
                                           calcBuffer.buffer[calcBuffer.index++] = c;
                                           putchar(c);
                                     }
@@ -59,14 +62,14 @@ void runCalculator() {
 }
 
 void evaluate(char* expression) {
-      // int value, error = 0;
-      // //value = getValue(expression, &error);
-      // if (!error) {
-      //     //  printInt(value);
-      // } else {
-      //       printStringLn("Invalid expression");
-      // }
-      // putchar('\n');
+      int value, error = 0;
+      value = getValue(expression, &error);
+      if (!error) {
+            printInt(value);
+      } else {
+            printStringLn("Invalid expression");
+      }
+      putchar('\n');
 }
 
 static void initCalculator(){

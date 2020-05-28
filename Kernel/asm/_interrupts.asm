@@ -96,7 +96,7 @@ _syscallHandler:
 	mov [registers+8],rdi
 	mov [registers+16],rsi
 	mov [registers+24],rdx
-	mov [registers+32],rdx
+	mov [registers+32],rcx
 	mov [registers+40],r10
 	mov [registers+48],r8
 	mov [registers+56],r9

@@ -74,11 +74,6 @@ char * strtok(char *string, char *result, const char delim) {
             for (int i = 0; string[i] != 0 && i < BUFFER_SIZE; i++) {
                   ogString[i] = string[i];
             }
-            for (; ogString[currentIndex] != 0 && ogString[currentIndex] == delim && currentIndex < BUFFER_SIZE; currentIndex++)
-                  ;
-            for (int i = 0; ogString[currentIndex] != 0 && ogString[currentIndex] != delim && currentIndex < BUFFER_SIZE; currentIndex++, i++) {
-                  result[i] = string[currentIndex];
-            }
       } else {   
             if (currentIndex == BUFFER_SIZE || ogString[currentIndex] == 0) {
                   return 0;
@@ -99,7 +94,7 @@ uint64_t strToInt(char *str, int *error) {
       uint64_t num = 0;
       *error = 0;
       for (int i = 0; str[i] != 0; i++) {
-            if (IS_NUMBER(str[i])) {
+            if (IS_DIGIT(str[i])) {
                   num *= 10;
                   num += str[i] - '0';
             } else {
@@ -186,3 +181,76 @@ void blinkCursor(int *blink){
             *blink = 1;
       }
 }
+
+int isNum(char *str){
+      int index = 0;
+      if(str[index]=='.'){
+            return 0;
+      }
+      if(str[index]=='-'){
+            index++;
+      }
+      for (; str[index] != 0 && str[index] != '.'; index++) {
+            if (!IS_DIGIT(str[index])) {
+                  return 0;
+            }
+      }
+      if(str[index] == '.'){
+            index++;
+            for (; str[index] != 0; index++) {
+                  if (!IS_DIGIT(str[index])) {
+                        return 0;
+                  }
+            }
+      }
+      return 1;
+}
+
+// double strtof(const char *string) {
+//       double res = 0.0F;
+//       int afterDecimalPoint = 0, i = 0, negative = 1;
+//       double div = 1;
+
+//       while (string[i] != 0) {
+//             if (string[i] == '-') {
+//                   negative *= -1;
+//             } else if (IS_DIGIT(string[i])) {
+//                   if (!afterDecimalPoint) {
+//                         res *= 10;
+//                         res += string[i] - '0';
+//                   } else {
+//                         div *= 10;
+//                         res += (double)(string[i] - '0') / div;
+//                   }
+//             } else if (string[i] == '.') {
+//                   afterDecimalPoint = 1;
+//             } else {
+//                   break;
+//             }
+//             i++;
+//       }
+//       return res * negative;
+// }
+//ttps://www.geeksforgeeks.org/convert-floating-point-number-string/
+// void ftoa(double n, char *res, int afterpoint) {
+//       // Extract integer part
+//       int ipart = (int)n;
+
+//       // Extract floating part
+//       double fpart = n - (double)ipart;
+
+//       // convert integer part to string
+//       int i = uintToBase(ipart, res, 0);
+
+//       // check for display option after point
+//       if (afterpoint != 0) {
+//             res[i] = '.';  // add dot
+
+//             // Get the value of fraction part upto given no.
+//             // of points after dot. The third parameter
+//             // is needed to handle cases like 233.007
+//             fpart = fpart * pow(10, afterpoint);
+
+//             uintToBase((int)fpart, res + i + 1,10);
+//       }
+// }

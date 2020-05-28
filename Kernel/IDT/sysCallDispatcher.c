@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <sysCallDispatcher.h>
 #include <systemCalls.h>
+#include <stringLib.h>
 
 #define SYS_INFOREG_ID 0
 #define SYS_GETMEM_ID 1

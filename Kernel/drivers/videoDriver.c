@@ -1,7 +1,6 @@
 #include <videoDriver.h>
 #include <font.h>
 #include <lib.h>
-#include <colours.h>
 
 #define PIXEL_SIZE 3
 struct vbe_mode_info_structure
@@ -43,7 +42,7 @@ struct vbe_mode_info_structure
     uint8_t reserved1[206];
 } __attribute__((packed));
 
-static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y);
+static int getPixelDataByPosition(uint32_t x, uint32_t y);
 static void separateMainScreen();
 
 static struct vbe_mode_info_structure * screen_info = (void *) 0x5C00;
@@ -53,7 +52,7 @@ static uint32_t SCREEN_HEIGHT = 768;
 static t_screen screens[MAX_SCREENS];
 static t_screen * currentScreen;
 
-void initVideoDriver(int BGColour, int FontColour) {
+void initVideoDriver(t_colour BGColour, t_colour FontColour) {
       t_screen screen1;
       screen1.defaultBGColour = BGColour;
       screen1.defaultFontColour = FontColour;
@@ -80,22 +79,30 @@ void initVideoDriver(int BGColour, int FontColour) {
       currentScreen = &screens[1];
 }
 
-void changeScreen(int screen){
+void changeScreen(t_screenID screen){
     currentScreen = &screens[screen];
 }
 
-void writePixel(uint32_t x, uint32_t y, int colour)  //BGR
+void writePixel(uint32_t x, uint32_t y, t_colour colour)  //BGR
 {
-    uint32_t * currentFrame = getPixelDataByPosition(x, y);
-    currentFrame[0] = (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C
-    currentFrame[1] = (char)((colour >> 8) & 0xFF);
-    currentFrame[2] = (char)(colour & 0xFF);
+    char * currentFrame = (char*)((uint64_t)screen_info->framebuffer);  //casteo a iuint64 para evitar warnin
+    int offset = getPixelDataByPosition(x,y);
+    currentFrame[offset] = (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C //BLUE
+    currentFrame[offset+1] = (char)((colour >> 8) & 0xFF);//GREEN
+    currentFrame[offset+2] = (char)(colour & 0xFF);//RED
 }
 
+// int writePixel(int x, int y, int colour) {
+//       char *screen = screen_info->framebuffer;
+//       unsigned where = getFixelDataByPosition(x, y);
+//       screen[where] = colour & 255;           // BLUE
+//     screen[where + 1] = (colour >> 😎 & 255;   // GREEN
+//     screen[where + 2] = (colour >> 16) & 255;  // RED
+// }
 // 0 x XX XX XX XX
-// 0 x 00 FF 00 00 
+// 0 x 00 FF 00 00
 
-void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
+void printCharOnScreen(char c, t_colour bgColour, t_colour fontColour, int advance)
 {
 
     if (currentScreen->currentX != 0 && currentScreen->width - currentScreen->currentX < CHAR_WIDTH)
@@ -119,11 +126,11 @@ void printCharOnScreen(char c, int bgColour, int fontColour, int advance)
             int8_t isFont = (charMap[i] >> (CHAR_WIDTH - j - 1)) & 0x01; //-1 para no romper el decalaje, primera vez tengo q decalar 7
             if (isFont)
             {
-                writePixel(x, y, currentScreen->defaultFontColour);
+                writePixel(x, y, fontColour);
             }
             else
             {
-                writePixel(x, y, currentScreen->defaultBGColour);
+                writePixel(x, y, bgColour);
             }
             x++;
         }
@@ -212,9 +219,9 @@ void clearScreen(){
     currentScreen->currentY = 0;
 }
 
-static uint32_t * getPixelDataByPosition(uint32_t x, uint32_t y)
+static int getPixelDataByPosition(uint32_t x, uint32_t y)
 {
-   return (uint32_t*)((uint64_t)screen_info->framebuffer + PIXEL_SIZE * (x + y * SCREEN_WIDTH)); //prque casteo a 64 funciona?
+   return PIXEL_SIZE * (x + y * SCREEN_WIDTH); 
 }
 
 static void separateMainScreen(){
@@ -226,6 +233,7 @@ static void separateMainScreen(){
         }
     }
 }
+
 
 //00110010
 //each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384

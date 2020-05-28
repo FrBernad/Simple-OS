@@ -91,7 +91,7 @@ uint64_t strToInt(char *str, int *error) {
       uint64_t num = 0;
       *error = 0;
       for (int i = 0; str[i] != 0; i++) {
-            if (IS_NUMBER(str[i])) {
+            if (IS_DIGIT(str[i])) {
                   num *= 10;
                   num += str[i] - '0';
             } else {

@@ -16,10 +16,16 @@ static void processChar(char c);
 static t_command commands[COMMANDS];
 static t_buffer shellBuffer = {{0}, 0};
 static char username[BUFFER_SIZE] = "USER";
-static int blink = 1;
-
+static int blink = 1, started = 0;
+//TODO: CAMBIAR TABLA DEL DRIVER DE TECLADO PARA BP SPACE ENTER...
+//TODO: SACAR ESPERA ACTIVA HLT
+//TODO: PONER BACKSPACE EN PUTCHAR
+//TODO: ARREGLAR DECALAJE COLORES
 void runShell() {
+      if(!started){
       initShell();
+      started = 1;
+      }
       while (1) {
             if (sys_ticksElapsed() % 12 == 0) {
                   blinkCursor(&blink);
@@ -42,8 +48,8 @@ static void initShell(){
 }
 
 static void shellText() {
-      printString(username);
-      printString(" $ > ");
+      printStringWC(username,BLACK,WHITE);
+      printStringWC(" $ > ",BLACK,WHITE);
 }
 
 static void processCommand() {
@@ -52,6 +58,7 @@ static void processCommand() {
       char * argv[MAX_ARGS] = {arg1,arg2,arg3,arg4};
       char command[BUFFER_SIZE] = {0};
       strtok(shellBuffer.buffer, command, ' ');  //parse buffer
+      strtok(0, command, ' ');  //parse buffer
       while (argc < MAX_ARGS && strtok(0, argv[argc], ' ')) {
             argc++;
       };
