@@ -21,6 +21,6 @@ int isEmpty(t_stack* stack) {
 
 void peek(t_stack* stack, void* elem) {
       if (!(isEmpty(stack))) {
-            memcpy(elem, (void*)((uint64_t)stack->stack + (stack->size * stack->dataSize)), stack->dataSize);
+            memcpy(elem, (void*)((uint64_t)stack->stack + ((stack->size-1) * stack->dataSize)), stack->dataSize);
       }
 }

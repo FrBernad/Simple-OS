@@ -22,11 +22,13 @@ static int operate(int left, int right, char *operator);
 int getValue(char *expression, int *error) {
       t_buffer postfix = {{0}, 0};
       toPostfix(expression, &postfix, error);
+      // printStringLn(postfix.buffer);
+
       if (*error) {
             return -1;
       }
-      putchar('\n');
-      printStringLn(postfix.buffer);
+      // putchar('\n');
+      // printStringLn(postfix.buffer);
 
       int numbers[BUFFER_SIZE] = {0}, popNum;
       t_stack numStack = {numbers, 0, BUFFER_SIZE, INTEGER};
@@ -48,19 +50,23 @@ int getValue(char *expression, int *error) {
                         int left, right, result;
                         pop(&numStack, &right);
                         pop(&numStack, &left);
-                        printString("Left= ");
+/*printString("Left= ");
                         printInt(left);
                         putchar('\n');
                         printString("Right= ");
                         printInt(right);
-                        putchar('\n');
+                        putchar('\n');*/
                         result = operate(left, right, token);
-                        printInt(result);
-                        putchar('\n');
+                      /*  printInt(result);
+                        putchar('\n');*/
                         push(&numStack, &result);
                   }
             }
       }
+      if(numStack.size != 1){
+            *error = 1;
+      }
+
       strtok(0, 0, ' ');
 
       if (*error) {
@@ -78,21 +84,23 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error) {
 
       char token[BUFFER_SIZE] = {0};
       strtok(expression, token, ' ');
-      while (strtok(0, token, ' ')){
-            if(isNum(token)){
+      while (strtok(0, token, ' ')) {
+            if (isNum(token)) {
                   for (int i = 0; token[i] != 0; i++) {
                         postfix->buffer[postfix->index++] = token[i];
                         postfix->buffer[postfix->index++] = ' ';
                   }
-            } else {
-                  if (IS_OPERAND(token[0])&&token[1]==0) { //if is operand and strlen is 1
-                        putOperator(token[0], &operatorsStack, postfix, error);
-                        if (*error) {
-                              return;
-                        }
+            } else if (IS_OPERAND(token[0]) && token[1] == 0) {  //if is operand and strlen is 1
+                  putOperator(token[0], &operatorsStack, postfix, error);
+                  if (*error) {
+                        return;
                   }
+            } else {
+                  *error = 1;
+                  return;
             }
       }
+
       strtok(0, 0, ' ');
 
       char popOp;
@@ -127,14 +135,14 @@ static void putOperator(char operator, t_stack *operatorsStack, t_buffer *postfi
 }
 
 static int hasToPop(char peek, char current) {
-      int aux= precedenceMx[getPrecedence(peek)][getPrecedence(current)];
+      int aux = precedenceMx[getPrecedence(peek)][getPrecedence(current)];
       putchar('\n');
       putchar('\n');
       printString("Precedence peek= ");
       printString(&peek);
       printString(",current= ");
       printString(&current);
-      printString(" -> ");
+      printString("-> ");
       printInt(aux);
       putchar('\n');
       return aux;
