@@ -14,9 +14,9 @@ static void invalid_op_code();
 
 extern t_queue taskManager;
 
-static t_application currentProcess;
 
 void exceptionDispatcher(int exception, uint64_t* stackframe) {
+      t_application currentProcess;
       printStringLn("Warning: division by zero is undefined");
       queuePeek(&taskManager, &currentProcess);
       stackframe[0] = (uint64_t)currentProcess.app;
