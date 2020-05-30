@@ -5,7 +5,7 @@
 #include <utils.h>
 
 static const int precedenceMx[5][6] = {
-    //+, -, *, %, (, )
+   //+, -, *, %, (, )
     {1, 1, 0, 0, 0, 1},  //+
     {1, 1, 0, 0, 0, 1},  //-
     {1, 1, 1, 1, 0, 1},  //*
@@ -22,14 +22,10 @@ static int operate(int left, int right, char *operator);
 int getValue(char *expression, int *error) {
       t_buffer postfix = {{0}, 0};
       toPostfix(expression, &postfix, error);
-      // printStringLn(postfix.buffer);
 
       if (*error) {
             return -1;
       }
-      // putchar('\n');
-      // printStringLn(postfix.buffer);
-
       int numbers[BUFFER_SIZE] = {0}, popNum;
       t_stack numStack = {numbers, 0, BUFFER_SIZE, INTEGER};
 

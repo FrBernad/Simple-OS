@@ -14,42 +14,22 @@ void addProcess(t_application* app) {
       queueInsert(&taskManager, app);
 }
 
-void changeProcess(/*uint64_t* rip, uint64_t* rsp*/) {
-      // putchar('\n');
-      // for (int i = 0; i < MAX_PROCESSES; i++) {
-      //       printString("current Screen:");
-      //       printInt(processes[i].screenID);
-      //       putchar('\n');
-      // }
+void changeProcess(uint64_t* stackframe) {
       t_application currentProcess, nextProcess;
       queueRemoveData(&taskManager, &currentProcess);
       queuePeek(&taskManager, &nextProcess);
       changeScreen(nextProcess.screenID);
       changeBuffer(nextProcess.screenID);
-      // for (int i = 0; i < MAX_PROCESSES; i++) {
-      //       printString("current Screen:");
-      //       printInt(processes[i].screenID);
-      //       putchar('\n');
-      // }
       queueInsert(&taskManager, &currentProcess);
-      _sti();
-      nextProcess.app();
-      // *rip = (uint64_t)currentProcess.app;
+      stackframe[0] = (uint64_t)nextProcess.app;
+      stackframe[3] = (uint64_t)nextProcess.stack;
 }
 
-void runProcess(/*uint64_t* rip, uint64_t* rsp*/) {
+void runProcess(uint64_t* stackframe) {
       t_application currentProcess;
       queuePeek(&taskManager, &currentProcess);
       changeScreen(currentProcess.screenID);
       changeBuffer(currentProcess.screenID);
-      _sti();
-      currentProcess.app();
-   //   *rip=(uint64_t)currentProcess.app;
-      //WTFFFFFF
-      //  for (int i = 0; i < MAX_PROCESSES; i++)
-      //  {
-      //        printString("current Screen:");
-      //        printInt(processes[i].screenID);
-      //        putchar('\n');
-      //  }
+      stackframe[0] = (uint64_t)currentProcess.app;
+      stackframe[3] = (uint64_t)currentProcess.stack;
 }

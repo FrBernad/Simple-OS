@@ -124,10 +124,7 @@ void checkInvalidOpcodeException(int argc, char** args) {
             putchar('\n');
             return;
       }
-      int a = 0;
-      int b = 20 / a;
-      if (b == 0) {
-      }
+      __asm__("ud2");  //https://mudongliang.github.io/x86/html/file_module_x86_id_318.html
 }
 
 void showArgs(int argc, char** args){

@@ -95,7 +95,6 @@ sys_getMem:
 	push rdx
 	push r10
 
-	;sys_getMem(r->rdi,(uint8_t*)r->rsi);
 	mov rax,rsi
 
 	mov rdx,0

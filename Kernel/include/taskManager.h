@@ -10,7 +10,7 @@
 extern t_queue taskManager;
 
 void addProcess(t_application* app);
-void changeProcess(/*uint64_t* rip, uint64_t* rsp*/);
-void runProcess(/*uint64_t* rip, uint64_t* rsp*/);
+void changeProcess(uint64_t * stackframe);
+void runProcess(uint64_t* stackframe);
 
 #endif

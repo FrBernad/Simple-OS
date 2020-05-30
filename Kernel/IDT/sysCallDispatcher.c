@@ -55,7 +55,7 @@ uint64_t sysCallDispatcher(registers *r) {
                         break;
 
                   case SYS_CHANGE_APP_ID:
-                        changeProcess(/*(uint64_t *)r->rip, (uint64_t *)r->rsp*/);
+                        changeProcess((uint64_t *)r->rsp);
                         break;
 
                   case SYS_LOAD_APP_ID:
@@ -63,7 +63,7 @@ uint64_t sysCallDispatcher(registers *r) {
                         break;
 
                   case SYS_RUN_ID:
-                        runProcess(/*(uint64_t *)r->rip, (uint64_t *)r->rsp*/);
+                        runProcess((uint64_t *)r->rsp);
                         break;
             }
       }

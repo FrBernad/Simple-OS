@@ -76,23 +76,22 @@ SECTION .text
 
 
 %macro exceptionHandler 1
-;	push rsi
-;	push rdx
 
-   ; lea rsi,[rsp+8*3]   ;load rip
-	;lea rdx,[rsp+8*6]   ;load rsp
+	push rsi
 
-;	pop rdx
-	;pop rsi
+	lea rsi,[rsp+8]
 
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
-	popState
+    popState
+
+	pop rsi
 
 	iretq
+
 %endmacro
 
 ;se llenan
@@ -102,38 +101,27 @@ SECTION .text
 ;syscalls 
 
 _syscallHandler:
-  ;  push rsi
+	push rsi
 
-  ;  lea rsi,[rsp+8*2]   ;load rip
-;	mov [registers],rsi
+	lea rsi,[rsp+8]
+	mov [registers+8*0],rsi  ;save rsp
 
-;	lea rsi,[rsp+8*5]   ;load rsp
-;	mov [registers+8*1],rsi
-
-;	pop rsi
-	push rbp
-	mov rbp,rsp
+	pop rsi
 
 	push rdi
+	mov [registers+8*1],rax
+	mov [registers+8*2],rdi
+	mov [registers+8*3],rsi
+	mov [registers+8*4],rdx
+	mov [registers+8*5],r10
+	mov [registers+8*6],r8
+	mov [registers+8*7],r9
 
-	mov [registers+8*0],rax
-	mov [registers+8*1],rdi
-	mov [registers+8*2],rsi
-	mov [registers+8*3],rdx
-	mov [registers+8*4],r10
-	mov [registers+8*5],r8
-	mov [registers+8*6],r9
 	mov rdi,registers
-	; push rcx
-	; mov rcx,rax
-	; push r10
 	call sysCallDispatcher
-	; pop r10
-	; pop rcx
 
 	pop rdi
 
-	leave
 	iretq
 
 _hlt:
@@ -197,6 +185,7 @@ _irq05Handler:
 _exception0Handler:
 	exceptionHandler 0
 
+;Invalid Opcode Exception
 _exception6Handler:
 	exceptionHandler 6
 

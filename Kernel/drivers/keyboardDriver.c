@@ -27,7 +27,7 @@ static char pressCodes[KEYS][2] =
 static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, l_ctrl = 0;
 static char buffer1[MAX_SIZE]={0},buffer2[MAX_SIZE]={0};
 static t_queue buffers[MAX_SCREENS] = {{buffer1, 0, -1, 0, MAX_SIZE, CHAR}, { buffer2, 0, -1, 0, MAX_SIZE, CHAR }};
-static t_queue * currentBuffer;
+static t_queue * currentBuffer=&buffers[1];
 
 char cs0=CHANGE_SCREEN_0,cs1=CHANGE_SCREEN_1,clearS=CLEAR_SCREEN;
 

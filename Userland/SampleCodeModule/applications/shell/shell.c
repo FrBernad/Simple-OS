@@ -22,6 +22,7 @@ static int blink = 1, started = 0;
 static t_registers registers;
 
 //TODO: RIP
+//TODO: REVISAR TEMP
 
 //TODO: INVALID OP HACE RQ HAGA INVALID OP
 
@@ -29,7 +30,6 @@ void runShell() {
       if (!started) {
             initShell();
       }
-      
       char c;
       while (1) {
             c=0;
