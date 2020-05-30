@@ -36,7 +36,7 @@ void clear(){
 }
 
 void deletechar(){ 
-      sys_deletechar();
+      putchar('\b');
 }
 
 void staticputchar(char c){

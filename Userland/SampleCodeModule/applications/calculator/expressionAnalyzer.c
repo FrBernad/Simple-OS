@@ -38,7 +38,7 @@ int getValue(char *expression, int *error) {
       while (strtok(0, token, ' ')) {
             if (isNum(token)) {
                   popNum = strToInt(token, error);
-                  push(&numStack, &popNum);
+                  stackPush(&numStack, &popNum);
             } else {
                   if (IS_OPERAND(*token)) {
                         if (numStack.size < 2) {
@@ -46,10 +46,9 @@ int getValue(char *expression, int *error) {
                               *error = 1;
                               break;
                         }
-
                         int left, right, result;
-                        pop(&numStack, &right);
-                        pop(&numStack, &left);
+                        stackPop(&numStack, &right);
+                        stackPop(&numStack, &left);
 /*printString("Left= ");
                         printInt(left);
                         putchar('\n');
@@ -59,7 +58,7 @@ int getValue(char *expression, int *error) {
                         result = operate(left, right, token);
                       /*  printInt(result);
                         putchar('\n');*/
-                        push(&numStack, &result);
+                        stackPush(&numStack, &result);
                   }
             }
       }
@@ -74,7 +73,7 @@ int getValue(char *expression, int *error) {
       }
 
       int result;
-      pop(&numStack, &result);
+      stackPop(&numStack, &result);
       return result;
 }
 
@@ -104,8 +103,8 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error) {
       strtok(0, 0, ' ');
 
       char popOp;
-      while (!isEmpty(&operatorsStack)) {
-            pop(&operatorsStack, &popOp);
+      while (!stackIsEmpty(&operatorsStack)) {
+            stackPop(&operatorsStack, &popOp);
             postfix->buffer[postfix->index++] = popOp;
             postfix->buffer[postfix->index++] = ' ';
       }
@@ -113,10 +112,10 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error) {
 
 static void putOperator(char operator, t_stack *operatorsStack, t_buffer *postfix, int *error) {
       char peekOp, popOp;
-      while (!isEmpty(operatorsStack)) {
-            peek(operatorsStack, &peekOp);
+      while (!stackIsEmpty(operatorsStack)) {
+            stackPeek(operatorsStack, &peekOp);
             if (hasToPop(peekOp, operator)) {
-                  pop(operatorsStack, &popOp);
+                  stackPop(operatorsStack, &popOp);
                   postfix->buffer[postfix->index++] = popOp;
                   postfix->buffer[postfix->index++] = ' ';
             } else {
@@ -124,21 +123,21 @@ static void putOperator(char operator, t_stack *operatorsStack, t_buffer *postfi
             }
       }
       if (operator== ')') {
-            if (isEmpty(operatorsStack)) {
+            if (stackIsEmpty(operatorsStack)) {
                   *error = 1;
                   return;
             }
-            pop(operatorsStack, &popOp);
+            stackPop(operatorsStack, &popOp);
       } else {
-            push(operatorsStack, &operator);
+            stackPush(operatorsStack, &operator);
       }
 }
 
-static int hasToPop(char peek, char current) {
+static int hasToPop(char peek ,char current) {
       int aux = precedenceMx[getPrecedence(peek)][getPrecedence(current)];
       putchar('\n');
       putchar('\n');
-      printString("Precedence peek= ");
+      printString("Precedence peek ");
       printString(&peek);
       printString(",current= ");
       printString(&current);

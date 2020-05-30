@@ -5,7 +5,6 @@
 
 #define MAX_APPS 2
 
-void startApplication();
-void changeApplication(const t_application app);
+void initApps();
 
 #endif

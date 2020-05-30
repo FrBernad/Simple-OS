@@ -8,6 +8,7 @@
 typedef struct{
     void(*command)(int,char **);
     char * name;
+    char * description;
 }t_command;
 
 //prints commands man

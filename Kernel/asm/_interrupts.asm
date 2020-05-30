@@ -1,4 +1,3 @@
-
 GLOBAL _cli
 GLOBAL _sti
 GLOBAL picMasterMask
@@ -77,29 +76,53 @@ SECTION .text
 
 
 %macro exceptionHandler 1
+;	push rsi
+;	push rdx
+
+   ; lea rsi,[rsp+8*3]   ;load rip
+	;lea rdx,[rsp+8*6]   ;load rsp
+
+;	pop rdx
+	;pop rsi
+
 	pushState
 
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
 	popState
+
 	iretq
 %endmacro
 
+;se llenan
+;%rdi, %rsi, %rdx, %rcx, %r8 y %r9 
+;necesito
+;%rax	%rdi	%rsi	%rdx	%r10	%r8	   %r9
+;syscalls 
+
 _syscallHandler:
-	push    rbp
-    mov     rbp, rsp
+  ;  push rsi
+
+  ;  lea rsi,[rsp+8*2]   ;load rip
+;	mov [registers],rsi
+
+;	lea rsi,[rsp+8*5]   ;load rsp
+;	mov [registers+8*1],rsi
+
+;	pop rsi
+	push rbp
+	mov rbp,rsp
 
 	push rdi
 
-	mov [registers],rax
-	mov [registers+8],rdi
-	mov [registers+16],rsi
-	mov [registers+24],rdx
-	mov [registers+32],rcx
-	mov [registers+40],r10
-	mov [registers+48],r8
-	mov [registers+56],r9
+	mov [registers+8*0],rax
+	mov [registers+8*1],rdi
+	mov [registers+8*2],rsi
+	mov [registers+8*3],rdx
+	mov [registers+8*4],r10
+	mov [registers+8*5],r8
+	mov [registers+8*6],r9
 	mov rdi,registers
 	; push rcx
 	; mov rcx,rax
@@ -107,7 +130,9 @@ _syscallHandler:
 	call sysCallDispatcher
 	; pop r10
 	; pop rcx
+
 	pop rdi
+
 	leave
 	iretq
 
@@ -141,11 +166,7 @@ picSlaveMask:
     pop     rbp
     retn
 
-;se llenan
-;%rdi, %rsi, %rdx, %rcx, %r8 y %r9 
-;necesito
-;%rax	%rdi	%rsi	%rdx	%r10	%r8	   %r9
-;syscalls 
+
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:

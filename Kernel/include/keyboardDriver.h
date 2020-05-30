@@ -2,9 +2,11 @@
 #define KEYBOARD_DRIVER_H
 
 #include <applications.h>
+#include <screens.h>
 
 void keyboardHandler();
 char getchar();
-void changeBuffer(t_applicationID app);
+void changeBuffer(t_screenID screen);
+void runProcess();
 
 #endif

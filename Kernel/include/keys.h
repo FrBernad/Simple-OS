@@ -23,9 +23,6 @@ typedef enum {
       CHANGE_SCREEN_0 = 0x05,
       CHANGE_SCREEN_1 = 0x06,
       CLEAR_SCREEN = 0x16,
-      ENTER = 0xA,
-      B_SPACE = 0x8,
-      SPACE = 0x20
 } t_specialKeyCode;
 
 #endif

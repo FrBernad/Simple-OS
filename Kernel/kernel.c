@@ -4,6 +4,8 @@
 #include <videoDriver.h>
 #include <idtLoader.h>
 #include <colours.h>
+#include <timerTick.h>
+#include <stringLib.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -46,10 +48,9 @@ void * initializeKernelBinary()
 }
 
 int main()
-{	
-	load_idt();
-	initVideoDriver(BLACK,WHITE);
-	
-	((EntryPoint)sampleCodeModuleAddress)();
-	return 0;
+{
+      load_idt();
+      initVideoDriver(BLACK, WHITE);
+      ((EntryPoint)sampleCodeModuleAddress)();
+      return 0;
 }

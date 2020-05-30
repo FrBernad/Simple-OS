@@ -2,8 +2,11 @@
 #include <staticStack.h>
 #include <buffer.h>
 #include <stringLib.h>
+#include <staticQueue.h>
+#include <sizeof.h>
+#include <systemCalls.h>
 
 int main() {
-      startApplication();
+      initApps();
       return 0;
 }

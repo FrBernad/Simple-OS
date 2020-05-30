@@ -106,15 +106,14 @@ uint64_t strToInt(char *str, int *error) {
 }
 
 uint8_t stringcmp(char *str1, char *str2) {
-      uint8_t i;
-      if (*str1 == 0 || *str2 == 0) {
+      int i = 0;
+      while (str1[i] != 0 && str2[i] != 0 && str1[i] == str2[i]) {
+            i++;
+      }
+      if (str1[i] == str2[i]) {
             return 0;
       }
-      for (i = 0; str1[i] != 0 && str2[i] != 0; i++) {
-            if (str1[i] != str2[i])
-                  return 0;
-      }
-      return str1[i] == 0 && str2[i] == 0 ? 1 : 0;
+      return str1[i] < str2[i] ? -1 : 1;
 }
 
 void cleanBuffer(t_buffer *buffer) {

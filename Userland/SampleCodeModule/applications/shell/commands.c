@@ -6,40 +6,10 @@
 #include <stringLib.h>
 #include <systemCalls.h>
 #include <utils.h>
+#include <lib.h>
 
-void help(int argc, char** args) {
-      if (argc != 0) {
-            printStringLn("Invalid ammount of arguments.");
-            putchar('\n');
-            return;
-      }
-      printStringLn("These shell commands are defined internally.  Type 'help' to see this list.");
-      printStringLn(" >inforeg: prints the value of all the registers on screen");
-      printStringLn(" >printmem: recieves a pointer and makes a memory dump of 32 bytes on screen");
-      printStringLn(" >time: prints the current system time on screen");
-      printStringLn(" >cpuid: prints the processor brand and model on screen");
-      printStringLn(" >temp: prints the current processor temperature on screen");
-      printStringLn(" >changeUsername: changes the shell prompt username");
-      putchar('\n');
-}
+static void memToString(char * buffer,uint8_t * mem, int bytes);
 
-void inforeg(int argc, char** args) {
-      if (argc != 0) {
-            printStringLn("Invalid ammount of arguments.");
-            putchar('\n');
-            return;
-      }
-      t_register registers[REGISTERS];
-      sys_inforeg(registers);
-      for (int i = 0; i < REGISTERS; i++) {
-            printString(" > ");
-            printString(registers[i].name);
-            putchar(':');
-            printHex(registers[i].data);
-            putchar('\n');
-      }
-      putchar('\n');
-}
 
 void time(int argc, char** args) {
       if (argc != 0) {
@@ -50,7 +20,7 @@ void time(int argc, char** args) {
       uint8_t hours = sys_RTCTime(HOURS);
       uint8_t mins = sys_RTCTime(MINUTES);
       uint8_t secs = sys_RTCTime(SECONDS);
-      printString("Time -> ");
+      printString(" >Current time: ");
       printInt(hours);
       putchar(':');
       printInt(mins);
@@ -66,9 +36,10 @@ void cpuInfo(int argc, char** args) {
             putchar('\n');
             return;
       }
-      char cpuVendor[14] = {0};
-      t_cpuInfo cpuInfo = {cpuVendor, 0};
-      sys_cpuInfo(&cpuInfo);
+      char vendor[13] = {0};
+      t_cpuInfo cpuInfo = {vendor, 0};
+      cpuVendor(cpuInfo.cpuVendor);
+      cpuInfo.model=cpuModel();
       printString(" > CPU Vendor: ");
       printStringLn(cpuInfo.cpuVendor);
       printString(" > CPU model: ");
@@ -85,31 +56,40 @@ void printmem(int argc, char** args) {
       }
 
       int error = 0;
-      uint64_t mem = strToInt(args[0], &error);
+      uint64_t memDir = strToInt(args[0], &error);
       if (error) {
             printStringLn("Invalid argument for function printmem (must be an integer).");
             putchar('\n');
             return;
       }
 
-      char byteStr[3] = {'0', '0', 0};
-      uint8_t byte;
-      printStringLn(" >Data dump:");
+      int bytes=32;
 
+      uint8_t memData[bytes];
+      sys_getMem(memDir,memData);
+
+      char byteStr[bytes*2];
+      memToString(byteStr,memData,bytes);
+
+      printString(" >Data dump:");
       for (int i = 0; i < 32; i++) {
-            byte = sys_getMem(mem);
-            if (byte <= 0xF) {
-                  uintToBase(byte, byteStr + 1, 16);
-            } else {
-                  uintToBase(byte, byteStr, 16);
-            }
+            if(i%4==0){
+            putchar('\n');
             printString("   -[0x");
-            printHex(mem++);
+            printHex(memDir);
             printString("]: ");
-            printStringLn(byteStr);
-            byteStr[0] = '0';
-            byteStr[1] = '0';
-            byteStr[2] = 0;
+            memDir+=4;
+            }
+            if (i%2 == 0) {
+                  putcharWC(byteStr[i],BLACK,BLUE);
+                  putcharWC(byteStr[i + 1], BLACK, BLUE);
+                  putchar(' ');
+            }
+            else{
+                  putchar(byteStr[i]);
+                  putchar(byteStr[i + 1]);
+                  putchar(' ');
+            }
       }
       putchar('\n');
 }
@@ -157,5 +137,17 @@ void showArgs(int argc, char** args){
             printInt(i);
             printString("]=");
             printStringLn(args[i]);
+      }
+}
+
+static void memToString(char* buffer, uint8_t* mem, int bytes){
+      for (int i = 0; i < bytes*2; i++)
+      {
+            if (mem[i] <= 0xF) {
+                  buffer[i]='0';
+                  uintToBase(mem[i], buffer+ i + 1, 16);
+            } else {
+                  uintToBase(mem[i], buffer + i, 16);
+            }
       }
 }

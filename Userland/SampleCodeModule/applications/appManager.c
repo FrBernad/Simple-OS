@@ -1,20 +1,19 @@
 #include <appManager.h>
+#include <applications.h>
+#include <systemCalls.h>
 #include <shell.h>
 #include <calculator.h>
-#include <systemCalls.h>
 
-static void (*applications[MAX_APPS])() = {runCalculator,runShell};
+static t_application applications[MAX_APPS];
 
-static void (**currentApp)() = &applications[SHELL];
-
-void startApplication(){
-    (*currentApp)();
-}
-
-void changeApplication(const t_application app){
-    if(app.appID>=0 && app.appID<MAX_APPS){
-        sys_changeResources(&app);
-        currentApp=&applications[app.appID];
-        startApplication();
+void initApps(){
+    t_application shell = {&runShell,SCREEN_1};
+    t_application calculator = {&runCalculator,SCREEN_0};
+    applications[0]=shell;
+    applications[1]=calculator;
+    for (int i = 0; i < MAX_APPS; i++) {
+          sys_loadApp(&applications[i]);
     }
+    sys_run();
 }
+

@@ -1,6 +1,7 @@
 #include <videoDriver.h>
 #include <font.h>
 #include <lib.h>
+#include <stringLib.h>
 
 #define PIXEL_SIZE 3
 struct vbe_mode_info_structure
@@ -75,32 +76,24 @@ void initVideoDriver(t_colour BGColour, t_colour FontColour) {
       screens[1] = screen2;
 
       separateMainScreen();
-
-      currentScreen = &screens[1];
+     currentScreen = &screens[1];
 }
 
 void changeScreen(t_screenID screen){
-    currentScreen = &screens[screen];
+      currentScreen = &screens[screen];
+    //   printString("changed screen to screen: ");
+    //   printInt((int)screen);
+    //   putchar('\n');
 }
 
 void writePixel(uint32_t x, uint32_t y, t_colour colour)  //BGR
 {
     char * currentFrame = (char*)((uint64_t)screen_info->framebuffer);  //casteo a iuint64 para evitar warnin
     int offset = getPixelDataByPosition(x,y);
-    currentFrame[offset] = (char)((colour >> 16) & 0xFF); //casteo a char pq sino me tira en azul el 255 255 255 :C //BLUE
+    currentFrame[offset] = (char)((colour >> 16) & 0xFF); //BLUE
     currentFrame[offset+1] = (char)((colour >> 8) & 0xFF);//GREEN
     currentFrame[offset+2] = (char)(colour & 0xFF);//RED
 }
-
-// int writePixel(int x, int y, int colour) {
-//       char *screen = screen_info->framebuffer;
-//       unsigned where = getFixelDataByPosition(x, y);
-//       screen[where] = colour & 255;           // BLUE
-//     screen[where + 1] = (colour >> 😎 & 255;   // GREEN
-//     screen[where + 2] = (colour >> 16) & 255;  // RED
-// }
-// 0 x XX XX XX XX
-// 0 x 00 FF 00 00
 
 void printCharOnScreen(char c, t_colour bgColour, t_colour fontColour, int advance)
 {
@@ -229,7 +222,7 @@ static void separateMainScreen(){
     {
         for (int x = 0; x < 2 * CHAR_WIDTH; x++)
         {
-            writePixel(SCREEN_WIDTH/2-CHAR_WIDTH+x,y,WHITE);
+            writePixel(SCREEN_WIDTH/2-CHAR_WIDTH+x,y,DARK_RED);
         }
     }
 }

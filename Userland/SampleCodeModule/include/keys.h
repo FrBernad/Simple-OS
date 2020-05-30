@@ -17,17 +17,12 @@ typedef enum {
       CAPS_LCK_SC = 0x3A,
       ENTER_SC = 0x1C,
       L_CONTROL_SC = 0x1D,
-      EQUAL_SC = 0x0D
 } t_specialKeySC;
 
 typedef enum {
       CHANGE_SCREEN_0 = 0x05,
       CHANGE_SCREEN_1 = 0x06,
       CLEAR_SCREEN = 0x16,
-      ENTER = 0xA,
-      EQUAL = 0x3D,
-      B_SPACE = 0x8,
-      SPACE = 0x20
 } t_specialKeyCode;
 
 #endif

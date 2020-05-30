@@ -27,22 +27,24 @@ getRegistersData:
     ; mov [rdi+120],r14
     ; mov [rdi+128],r15
 
-    mov [rdi],rax
-    mov [rdi+8],rcx
-    mov [rdi+16],rdx
-    mov [rdi+24],rbx
-    mov [rdi+32],rsi
-    mov [rdi+40],rdi
-    mov [rdi+48],rsp
-    mov [rdi+56],rbp
-    mov [rdi+64],r8
-    mov [rdi+72],r9
-    mov [rdi+80],r10
-    mov [rdi+88],r11
-    mov [rdi+96],r12
-    mov [rdi+104],r13
-    mov [rdi+112],r14
-    mov [rdi+120],r15
+    mov [rdi+8],rax
+    mov rax,[rbp+8]      ; cargo RIP
+    mov [rdi],rax        
+    mov [rdi+8*2],rcx
+    mov [rdi+8*3],rdx
+    mov [rdi+8*4],rbx
+    mov [rdi+8*5],rsi
+    mov [rdi+8*6],rdi
+    mov [rdi+8*7],rsp
+    mov [rdi+8*8],rbp
+    mov [rdi+8*9],r8
+    mov [rdi+8*10],r9
+    mov [rdi+8*11],r10
+    mov [rdi+8*12],r11
+    mov [rdi+8*13],r12
+    mov [rdi+8*14],r13
+    mov [rdi+8*15],r14
+    mov [rdi+8*16],r15
 
     mov rax,rdi
 
