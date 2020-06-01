@@ -93,14 +93,9 @@ void keyboardHandler() {
       }
 }
 
-//a b c d e f 
 char getchar(){
      char c=0;
-   //  while(queueIsEmpty(currentBuffer)){
-     //      _hlt();
-    // }
      queueRemoveData(currentBuffer, &c);
-     
      return c;
 }
 

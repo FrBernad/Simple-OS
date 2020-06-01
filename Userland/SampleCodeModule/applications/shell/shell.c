@@ -22,9 +22,11 @@ static int blink = 1, started = 0;
 static t_registers registers;
 
 //TODO: RIP
-//TODO: REVISAR TEMP
+//TODO: PONER BIBLIOGRAFIA DE FUNCIONES
 
 //TODO: INVALID OP HACE RQ HAGA INVALID OP
+
+//TODO: REVISAR TEMP
 
 void runShell() {
       if (!started) {
@@ -116,6 +118,7 @@ static void processCommand() {
       char arg1[BUFFER_SIZE] = {0}, arg2[BUFFER_SIZE] = {0}, arg3[BUFFER_SIZE] = {0}, arg4[BUFFER_SIZE] = {0};
       char* argv[MAX_ARGS] = {arg1, arg2, arg3, arg4};
       char command[BUFFER_SIZE] = {0};
+      strtok(0, 0, ' ');
       strtok(shellBuffer.buffer, command, ' ');  //parse buffer
       strtok(0, command, ' ');                   //parse buffer
       while (argc < MAX_ARGS && strtok(0, argv[argc], ' ')) {

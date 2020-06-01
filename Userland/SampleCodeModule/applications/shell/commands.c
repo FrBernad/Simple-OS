@@ -1,15 +1,14 @@
 #include <RTCTime.h>
 #include <commands.h>
 #include <cpuInfo.h>
+#include <lib.h>
 #include <registers.h>
 #include <shell.h>
 #include <stringLib.h>
 #include <systemCalls.h>
 #include <utils.h>
-#include <lib.h>
 
-static void memToString(char * buffer,uint8_t * mem, int bytes);
-
+static void memToString(char* buffer, uint8_t* mem, int bytes);
 
 void time(int argc, char** args) {
       if (argc != 0) {
@@ -17,15 +16,22 @@ void time(int argc, char** args) {
             putchar('\n');
             return;
       }
+      
+      char timeFormat[3][3];
       uint8_t hours = sys_RTCTime(HOURS);
       uint8_t mins = sys_RTCTime(MINUTES);
       uint8_t secs = sys_RTCTime(SECONDS);
       printString(" >Current time: ");
-      printInt(hours);
-      putchar(':');
-      printInt(mins);
-      putchar(':');
-      printInt(secs);
+      intToStr(hours, timeFormat[0], 2);
+      intToStr(mins, timeFormat[1], 2);
+      intToStr(secs, timeFormat[2], 2);
+
+      for (int i = 0; i < 3; i++) {
+            printString(timeFormat[i]);
+            if (i != 2) {
+                  putchar(':');
+            }
+      }
       putchar('\n');
       putchar('\n');
 }
@@ -39,7 +45,7 @@ void cpuInfo(int argc, char** args) {
       char vendor[13] = {0};
       t_cpuInfo cpuInfo = {vendor, 0};
       cpuVendor(cpuInfo.cpuVendor);
-      cpuInfo.model=cpuModel();
+      cpuInfo.model = cpuModel();
       printString(" > CPU Vendor: ");
       printStringLn(cpuInfo.cpuVendor);
       printString(" > CPU model: ");
@@ -63,34 +69,34 @@ void printmem(int argc, char** args) {
             return;
       }
 
-      int bytes=32;
+      int bytes = 32;
 
       uint8_t memData[bytes];
-      sys_getMem(memDir,memData);
+      sys_getMem(memDir, memData);
 
-      char byteStr[bytes*2];
-      memToString(byteStr,memData,bytes);
+      char byteStr[bytes * 2];
+      memToString(byteStr, memData, bytes);
 
       printString(" >Data dump:");
       for (int i = 0; i < 32; i++) {
-            if(i%4==0){
-            putchar('\n');
-            printString("   -[0x");
-            printHex(memDir);
-            printString("]: ");
-            memDir+=4;
+            if (i % 4 == 0) {
+                  putchar('\n');
+                  printString("   -[0x");
+                  printHex(memDir);
+                  printString("]: ");
+                  memDir += 4;
             }
-            if (i%2 == 0) {
-                  putcharWC(byteStr[i],BLACK,BLUE);
+            if (i % 2 == 0) {
+                  putcharWC(byteStr[i], BLACK, BLUE);
                   putcharWC(byteStr[i + 1], BLACK, BLUE);
                   putchar(' ');
-            }
-            else{
+            } else {
                   putchar(byteStr[i]);
                   putchar(byteStr[i + 1]);
                   putchar(' ');
             }
       }
+      putchar('\n');
       putchar('\n');
 }
 
@@ -124,12 +130,11 @@ void checkInvalidOpcodeException(int argc, char** args) {
             putchar('\n');
             return;
       }
-      __asm__("ud2");  //https://mudongliang.github.io/x86/html/file_module_x86_id_318.html
+      __asm__("ud2");  // https://hjlebbink.github.io/x86doc/html/UD2.html
 }
 
-void showArgs(int argc, char** args){
-      for (int i = 0; i < argc && i < MAX_ARGS; i++)
-      {
+void showArgs(int argc, char** args) {
+      for (int i = 0; i < argc && i < MAX_ARGS; i++) {
             printString("arg[");
             printInt(i);
             printString("]=");
@@ -137,12 +142,11 @@ void showArgs(int argc, char** args){
       }
 }
 
-static void memToString(char* buffer, uint8_t* mem, int bytes){
-      for (int i = 0; i < bytes*2; i++)
-      {
+static void memToString(char* buffer, uint8_t* mem, int bytes) {
+      for (int i = 0; i < bytes * 2; i++) {
             if (mem[i] <= 0xF) {
-                  buffer[i]='0';
-                  uintToBase(mem[i], buffer+ i + 1, 16);
+                  buffer[i] = '0';
+                  uintToBase(mem[i], buffer + i + 1, 16);
             } else {
                   uintToBase(mem[i], buffer + i, 16);
             }

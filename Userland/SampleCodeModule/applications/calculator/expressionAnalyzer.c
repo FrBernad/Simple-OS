@@ -17,44 +17,40 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error);
 static void putOperator(char operator, t_stack *operatorsStack, t_buffer *postfix, int *error);
 static int hasToPop(char peek, char current);
 static int getPrecedence(char c);
-static int operate(int left, int right, char *operator);
+static void operate(double left, double right, char *operator, double * result);
 
-int getValue(char *expression, int *error) {
+
+//TODO:ARROBA
+
+void getValue(char *expression, int *error, char * result) {
       t_buffer postfix = {{0}, 0};
-      toPostfix(expression, &postfix, error);
 
+      toPostfix(expression, &postfix, error);
       if (*error) {
-            return -1;
+            return;
       }
-      int numbers[BUFFER_SIZE] = {0}, popNum;
-      t_stack numStack = {numbers, 0, BUFFER_SIZE, INTEGER};
+      double numbers[BUFFER_SIZE] = {0}, popNum;
+      t_stack numStack = {numbers, 0, BUFFER_SIZE, DOUBLE};
 
       char token[BUFFER_SIZE] = {0};
+      strtok(0, 0, ' ');
       strtok(postfix.buffer, token, ' ');
       while (strtok(0, token, ' ')) {
             if (isNum(token)) {
-                  popNum = strToInt(token, error);
+                  strToDouble(token, error,&popNum);
                   stackPush(&numStack, &popNum);
             } else {
                   if (IS_OPERAND(*token)) {
                         if (numStack.size < 2) {
-                              printStringLn("error");
                               *error = 1;
                               break;
                         }
-                        int left, right, result;
+                        double left, right, res;
                         stackPop(&numStack, &right);
+
                         stackPop(&numStack, &left);
-/*printString("Left= ");
-                        printInt(left);
-                        putchar('\n');
-                        printString("Right= ");
-                        printInt(right);
-                        putchar('\n');*/
-                        result = operate(left, right, token);
-                      /*  printInt(result);
-                        putchar('\n');*/
-                        stackPush(&numStack, &result);
+                        operate(left, right, token,&res);
+                        stackPush(&numStack, &res);
                   }
             }
       }
@@ -65,12 +61,12 @@ int getValue(char *expression, int *error) {
       strtok(0, 0, ' ');
 
       if (*error) {
-            return -1;
+            return;
       }
 
-      int result;
-      stackPop(&numStack, &result);
-      return result;
+     double total;
+     stackPop(&numStack, &total);
+     doubleToString(result,total,4);
 }
 
 static void toPostfix(char *expression, t_buffer *postfix, int *error) {
@@ -78,13 +74,14 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error) {
       t_stack operatorsStack = {operators, 0, BUFFER_SIZE, CHAR};
 
       char token[BUFFER_SIZE] = {0};
+      strtok(0, 0, ' ');
       strtok(expression, token, ' ');
       while (strtok(0, token, ' ')) {
             if (isNum(token)) {
                   for (int i = 0; token[i] != 0; i++) {
                         postfix->buffer[postfix->index++] = token[i];
-                        postfix->buffer[postfix->index++] = ' ';
                   }
+                  postfix->buffer[postfix->index++] = ' ';
             } else if (IS_OPERAND(token[0]) && token[1] == 0) {  //if is operand and strlen is 1
                   putOperator(token[0], &operatorsStack, postfix, error);
                   if (*error) {
@@ -93,6 +90,9 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error) {
             } else {
                   *error = 1;
                   return;
+            }
+            for (int i = 0; i < BUFFER_SIZE; i++) {
+                  token[i] = 0;
             }
       }
 
@@ -131,15 +131,6 @@ static void putOperator(char operator, t_stack *operatorsStack, t_buffer *postfi
 
 static int hasToPop(char peek ,char current) {
       int aux = precedenceMx[getPrecedence(peek)][getPrecedence(current)];
-      putchar('\n');
-      putchar('\n');
-      printString("Precedence peek ");
-      printString(&peek);
-      printString(",current= ");
-      printString(&current);
-      printString("-> ");
-      printInt(aux);
-      putchar('\n');
       return aux;
 }
 
@@ -167,24 +158,19 @@ static int getPrecedence(char c) {
       return -1;
 }
 
-static int operate(int left, int right, char *operator) {
-      int result;
+static void operate(double left, double right, char *operator, double * result){
       switch (*operator) {
             case '+':
-                  result = left + right;
+                  *result = left + right;
                   break;
             case '-':
-                  result = left - right;
+                  *result = left - right;
                   break;
             case '*':
-                  result = left * right;
+                  *result = left * right;
                   break;
             case '%':
-                  result = left / right;
-                  break;
-            case '^':
-                  result = left / right;
+                  *result = left / right;
                   break;
       }
-      return result;
 }

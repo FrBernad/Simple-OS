@@ -19,7 +19,7 @@
 #define SYS_LOAD_APP_ID 9
 #define SYS_RUN_ID 10
 
-uint64_t sysCallDispatcher(registers *r) {
+uint64_t sysCallDispatcher(t_registers *r) {
       if (r->rax >= 0 && r->rax <= SYSCALLS){
             switch (r->rax) {
                   case SYS_GETMEM_ID:

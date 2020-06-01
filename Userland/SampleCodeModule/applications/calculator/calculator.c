@@ -15,8 +15,6 @@ static void processChar(char c);
 static t_buffer calcBuffer = {{0}, 0};
 static int blink = 1, started = 0;
 
-//TODO: MODULARIZAR EL WHILE
-
 void runCalculator() {
       if (!started) {
             initCalculator();
@@ -73,11 +71,13 @@ static void processChar(char c){
       }
 }
 void evaluate(char* expression) {
-      int value, error = 0;
-      value = getValue(expression, &error);
+      int error = 0;
+      char result[BUFFER_SIZE]={0};
+      getValue(expression, &error,result);
       if (!error) {
-            printInt(value);
+            printStringLn(result);
       } else {
+            putchar('\n');
             printStringLn("Invalid expression");
       }
       putchar('\n');

@@ -74,12 +74,41 @@ SECTION .text
 	iretq
 %endmacro
 
+   
+	
+;rrsp rrbp rrip rrax rrcx rrdx rrbx rrsi rrdi rr8 rr9 rr10 rr11 rr12 rr13 rr14 rr15
 
 %macro exceptionHandler 1
-
 	push rsi
+	push rdx
 
-	lea rsi,[rsp+8]
+	mov [expRegisters+8*7],rsi ;save rsi
+
+	lea rsi,[rsp+16]             ;get rsp in rsi
+	mov [expRegisters+8*0],rsi  ;save rsp
+
+	mov [expRegisters+8*1],rbp  
+	
+	push rdx
+	mov rdx,[rsi]				;get rdi value pushed from interruptFrame
+	mov [expRegisters+8*2],rdx  ;save rdi
+	pop rdx
+
+	mov [expRegisters+8*3],rax
+	mov [expRegisters+8*4],rcx
+	mov [expRegisters+8*5],rdx
+	mov [expRegisters+8*6],rbx
+	mov [expRegisters+8*8],rdi
+	mov [expRegisters+8*9],r8
+	mov [expRegisters+8*10],r9
+	mov [expRegisters+8*11],r10
+	mov [expRegisters+8*12],r11
+	mov [expRegisters+8*13],r12
+	mov [expRegisters+8*14],r13
+	mov [expRegisters+8*15],r14
+	mov [expRegisters+8*16],r15
+
+	mov rdx,expRegisters
 
 	pushState
 
@@ -88,6 +117,7 @@ SECTION .text
 
     popState
 
+	pop rdx
 	pop rsi
 
 	iretq
@@ -104,20 +134,20 @@ _syscallHandler:
 	push rsi
 
 	lea rsi,[rsp+8]
-	mov [registers+8*0],rsi  ;save rsp
+	mov [sysRegisters+8*0],rsi  ;save rsp
 
 	pop rsi
 
 	push rdi
-	mov [registers+8*1],rax
-	mov [registers+8*2],rdi
-	mov [registers+8*3],rsi
-	mov [registers+8*4],rdx
-	mov [registers+8*5],r10
-	mov [registers+8*6],r8
-	mov [registers+8*7],r9
+	mov [sysRegisters+8*1],rax
+	mov [sysRegisters+8*2],rdi
+	mov [sysRegisters+8*3],rsi
+	mov [sysRegisters+8*4],rdx
+	mov [sysRegisters+8*5],r10
+	mov [sysRegisters+8*6],r8
+	mov [sysRegisters+8*7],r9
 
-	mov rdi,registers
+	mov rdi,sysRegisters
 	call sysCallDispatcher
 
 	pop rdi
@@ -198,14 +228,31 @@ haltcpu:
 SECTION .bss
 	aux resq 1
 
-	registers:
-		rrax resq 1
-		rrdi resq 1
-		rrsi resq 1
-		rrdx resq 1
-		rrcx resq 1
-		rr10 resq 1
-		rr8 resq 1
-		rr9 resq 1
-	
-	
+	sysRegisters:
+		rsrsp resq 1
+		rsrax resq 1
+		rsrdi resq 1
+		rsrsi resq 1
+		rsrdx resq 1
+		rsr10 resq 1
+		rsr8 resq 1
+		rsr9 resq 1
+
+	expRegisters:
+	    rersp resq 1
+	    rerbp resq 1
+		rerip resq 1
+		rerax resq 1
+		rercx resq 1
+		rerdx resq 1
+		rerbx resq 1
+		rersi resq 1
+		rerdi resq 1
+		rer8 resq 1
+		rer9 resq 1
+		rer10 resq 1
+		rer11 resq 1
+		rer12 resq 1
+		rer13 resq 1
+		rer14 resq 1
+		rer15 resq 1

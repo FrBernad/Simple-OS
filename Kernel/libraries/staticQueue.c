@@ -1,8 +1,8 @@
+#include <colours.h>
 #include <lib.h>
 #include <staticQueue.h>
-#include <systemCalls.h>
 #include <stringLib.h>
-#include <colours.h>
+#include <systemCalls.h>
 
 //https://www.tutorialspoint.com/data_structures_algorithms/queue_program_in_c.htm
 
@@ -38,18 +38,17 @@ void queueInsert(t_queue* queue, void* data) {
 }
 
 void queueRemoveData(t_queue* queue, void* data) {
-      if(queue->size!=0){
-      memcpy(data, (void*)((uint64_t)queue->queue + ((queue->front++) * queue->dataSize)), queue->dataSize);
+      if (queue->size != 0) {
+            memcpy(data, (void*)((uint64_t)queue->queue + ((queue->front++) * queue->dataSize)), queue->dataSize);
 
-      if (queue->front == queue->dim) {
-            queue->front = 0;
-      }
-      // printStringLn("Removed: ");
-      // sys_write((char*)data, 1, BLACK, WHITE);
-      // putchar('\n');
-      queue->size--;
-      }
-      else{
+            if (queue->front == queue->dim) {
+                  queue->front = 0;
+            }
+            // printStringLn("Removed: ");
+            // sys_write((char*)data, 1, BLACK, WHITE);
+            // putchar('\n');
+            queue->size--;
+      } else {
             memset(data, 0, queue->dataSize);
       }
 }

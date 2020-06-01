@@ -31,15 +31,13 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base) {
 
       return digits;
 }
-
 uint64_t pow(uint64_t x, uint64_t y) {
       if (y == 0)
             return 1;
-
+      int aux = x;
       for (int i = 1; i < y; i++) {
-            x *= x;
+            x *= aux;
       }
-
       return x;
 }
 
@@ -64,6 +62,7 @@ char * strtok(char *string, char *result, const char delim) {
             for (int i = 0; i < BUFFER_SIZE && ogString[i] != 0; i++) {
                   ogString[i] = 0;
             }
+            return 0;
       }
 
       for (int i = 0; result[i] != 0 && i < BUFFER_SIZE; i++) {
@@ -189,6 +188,9 @@ int isNum(char *str){
       if(str[index]=='-'){
             index++;
       }
+      if (!IS_DIGIT(str[index])) {
+            return 0;
+      }
       for (; str[index] != 0 && str[index] != '.'; index++) {
             if (!IS_DIGIT(str[index])) {
                   return 0;
@@ -205,51 +207,92 @@ int isNum(char *str){
       return 1;
 }
 
-// double strtof(const char *string) {
-//       double res = 0.0F;
-//       int afterDecimalPoint = 0, i = 0, negative = 1;
-//       double div = 1;
+void strToDouble(char * numStr, int * error, double * result){
+      *result = 0;
+      int i=0,k,sign=0;
+      double commaOffset=0;
+      char integerPart[BUFFER_SIZE] = {0};
 
-//       while (string[i] != 0) {
-//             if (string[i] == '-') {
-//                   negative *= -1;
-//             } else if (IS_DIGIT(string[i])) {
-//                   if (!afterDecimalPoint) {
-//                         res *= 10;
-//                         res += string[i] - '0';
-//                   } else {
-//                         div *= 10;
-//                         res += (double)(string[i] - '0') / div;
-//                   }
-//             } else if (string[i] == '.') {
-//                   afterDecimalPoint = 1;
-//             } else {
-//                   break;
-//             }
-//             i++;
-//       }
-//       return res * negative;
-// }
-//ttps://www.geeksforgeeks.org/convert-floating-point-number-string/
-// void ftoa(double n, char *res, int afterpoint) {
-//       // Extract integer part
-//       int ipart = (int)n;
+      if(numStr[i]=='-'){
+            sign=1;
+            i++;
+      }
 
-//       // Extract floating part
-//       double fpart = n - (double)ipart;
+      for (k=0; numStr[i] != 0 && numStr[i] != '.'; i++,k++){
+            integerPart[k]=numStr[i];
+      }
+      *result+=strToInt(integerPart,error);
+      if(numStr[i]=='.'){
+            i++;
+            for (; numStr[i] != 0; i++, commaOffset++) {
+                  *result *= 10;
+                  *result += numStr[i] - '0';
+            }
+            *result /= pow(10, commaOffset);
+      }
+      if(sign){
+            *result*=-1;
+      }
+}
 
-//       // convert integer part to string
-//       int i = uintToBase(ipart, res, 0);
 
-//       // check for display option after point
-//       if (afterpoint != 0) {
-//             res[i] = '.';  // add dot
+void doubleToString(char *res, double total,int afterpoint) {
+      int sign = 0;
+      if(total<0){
+            res[0]='-';
+            sign=1;
+            total*=-1;
+      }
+      // Extract integer part
+      int ipart = (int)total;
 
-//             // Get the value of fraction part upto given no.
-//             // of points after dot. The third parameter
-//             // is needed to handle cases like 233.007
-//             fpart = fpart * pow(10, afterpoint);
+      // Extract floating part
+      float fpart = total - (double)ipart;
 
-//             uintToBase((int)fpart, res + i + 1,10);
-//       }
-// }
+      // convert integer part to string
+      int i = intToStr(ipart, res+sign, 1);
+
+      // check for display option after point
+      if (afterpoint != 0) {
+            res[i+sign] = '.';  // add dot
+
+            // Get the value of fraction part upto given no.
+            // of points after dot. The third parameter
+            // is needed to handle cases like 233.007
+            fpart = fpart * pow(10, afterpoint);
+
+            intToStr((int)fpart, res + sign + i + 1, afterpoint);
+      }
+}
+
+void reverse(char *str, int len) {
+      int i = 0, j = len - 1, temp;
+      while (i < j) {
+            temp = str[i];
+            str[i] = str[j];
+            str[j] = temp;
+            i++;
+            j--;
+      }
+}
+
+// Converts a given integer x to string str[].
+// d is the number of digits required in the output.
+// If d is more than the number of digits in x,
+// then 0s are added at the beginning.
+int intToStr(int x, char str[], int d) {
+      int i = 0;
+      while (x) {
+            str[i++] = (x % 10) + '0';
+            x = x / 10;
+      }
+
+      // If number of digits required is more, then
+      // add 0s at the beginning
+      while (i < d)
+            str[i++] = '0';
+
+      reverse(str, i);
+      str[i] = '\0';
+      return i;
+}

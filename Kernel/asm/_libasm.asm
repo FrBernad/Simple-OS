@@ -62,23 +62,18 @@ cpuTemp:
 	mov ecx, 0x19C ;codigo que corresponde a THERMAL STATUS
 	rdmsr          ;me deja en eax la parte baja del msr solicitado, que en este caso es la unica que me interesa
 
-	shr rax,16                         ;shifteo que usaria para quedarme con los bits que me importan
-	and rax,0x7 ;0x0000000000000007    ;set in rax last 7 bytes digital readout
+	shr rax,16                          ;shifteo que usaria para quedarme con los bits que me importan
+	and rax,0x7 ;0x0000000000000007     ;set in rax last 7 bytes digital readout
 
 	mov rdi,rax							;backup digital readout
 
 	mov rcx,0
 	mov rax,0
-	mov ecx,0xEE
-	rdmsr          ;acces Tj_Max rdmsr
-	and rax,0x40000000  ;get bit 30, if turned on tjMax = 100 else tjMax=85
-	cmp rax,0
-	jne .tjhundred
-	mov rax,85
-	jmp .finish
-.tjhundred:
-	mov rax,100
-.finish:
+	mov ecx,0x1A2
+	rdmsr                              ;access DTS_THERMAL_PROFILE msr
+	shr rax,16                         ;shifteo que usaria para quedarme con los bits que me importan
+	and rax,0x8 ;0x0000000000000008    ;set in rax last 8 bytes of TCC ACTIVATION TEMP
+
 	sub rax,rdi
 
 	pop rdi
