@@ -14,12 +14,12 @@ static void zero_division();
 static void invalid_op_code();
 static void printRegisters(uint64_t* registers);
 
-extern t_queue taskManager;
+// extern t_queue taskManager;
 
 void exceptionDispatcher(int exception, uint64_t* stackframe, uint64_t* registers) {
-      t_application currentProcess;
-      queuePeek(&taskManager, &currentProcess);
-      stackframe[0] = (uint64_t)currentProcess.reset;
+      // t_application currentProcess;
+      // queuePeek(&taskManager, &currentProcess);
+      // stackframe[0] = (uint64_t)currentProcess.reset;
       // stackframe[3] = (uint64_t)currentProcess.stack;
       putchar('\n');
       switch (exception) {
@@ -32,6 +32,7 @@ void exceptionDispatcher(int exception, uint64_t* stackframe, uint64_t* register
                   break;
       }
       printRegisters(registers);
+      sys_changeProcess();
 }
 
 static void zero_division() {

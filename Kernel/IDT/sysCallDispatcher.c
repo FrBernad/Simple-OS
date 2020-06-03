@@ -5,6 +5,7 @@
 #include <systemCalls.h>
 #include <stringLib.h>
 #include <timerTick.h>
+#include <lib.h>
 #include <taskManager.h>
 
 #define SYS_GETMEM_ID 0
@@ -55,7 +56,7 @@ uint64_t sysCallDispatcher(t_registers *r) {
                         break;
 
                   case SYS_CHANGE_APP_ID:
-                        changeProcess((uint64_t *)r->rsp);
+                        sys_changeProcess();
                         break;
 
                   case SYS_LOAD_APP_ID:
@@ -63,7 +64,7 @@ uint64_t sysCallDispatcher(t_registers *r) {
                         break;
 
                   case SYS_RUN_ID:
-                        runProcess((uint64_t *)r->rsp);
+                        sys_forceStart();
                         break;
             }
       }

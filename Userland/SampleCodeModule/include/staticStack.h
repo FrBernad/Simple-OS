@@ -2,9 +2,6 @@
 #define STATIC_STACK_H
 
 #include <stdint.h>
-#include <sizeof.h>
-
-
 
 typedef struct{
     void * stack;

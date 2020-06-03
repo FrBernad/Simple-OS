@@ -31,7 +31,7 @@ void getValue(char *expression, int *error, char * result) {
             return;
       }
       double numbers[BUFFER_SIZE] = {0}, popNum;
-      t_stack numStack = {numbers, 0, BUFFER_SIZE, DOUBLE};
+      t_stack numStack = {numbers, 0, BUFFER_SIZE, sizeof(double)};
 
       char token[BUFFER_SIZE] = {0};
       strtok(0, 0, ' ');
@@ -73,7 +73,7 @@ void getValue(char *expression, int *error, char * result) {
 
 static void toPostfix(char *expression, t_buffer *postfix, int *error) {
       char operators[BUFFER_SIZE] = {0};
-      t_stack operatorsStack = {operators, 0, BUFFER_SIZE, CHAR};
+      t_stack operatorsStack = {operators, 0, BUFFER_SIZE, sizeof(char)};
 
       char token[BUFFER_SIZE] = {0};
       strtok(0, 0, ' ');

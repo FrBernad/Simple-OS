@@ -9,6 +9,7 @@
 #define INTERRUPS_H_
 
 #include <idtLoader.h>
+#include <stdint.h>
 
  
 void _irq00Handler(void);
@@ -22,6 +23,10 @@ void _syscallHandler(void);
 
 void _exception0Handler(void);
 void _exception6Handler(void);
+
+void sys_changeProcess();
+void sys_forceStart();
+uint64_t _initialize_stack_frame(void * wrapper, void * rip, void * rsp, void * args);
 
 void _cli(void);
 

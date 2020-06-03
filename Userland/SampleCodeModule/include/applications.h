@@ -5,10 +5,8 @@
 #include <stdint.h>
 
 typedef struct {
-      void (*app)();
-      void (*reset)();
+      void (*entryPoint)();
       t_screenID screenID;
-      uint64_t* stack;
 } t_application;
 
 #endif

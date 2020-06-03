@@ -4,7 +4,9 @@ GLOBAL cpuTemp
 GLOBAL sys_getMem
 
 section .text
-	
+
+
+
 cpuVendor:
 	push rbp
 	mov rbp, rsp
@@ -109,3 +111,4 @@ sys_getMem:
 	mov rsp, rbp
 	pop rbp
 	ret
+

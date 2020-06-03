@@ -17,10 +17,14 @@ GLOBAL _syscallHandler
 GLOBAL _exception0Handler
 GLOBAL _exception6Handler
 
+GLOBAL sys_changeProcess
+GLOBAL sys_forceStart
+GLOBAL _initialize_stack_frame
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN sysCallDispatcher
+EXTERN schedule
 
 SECTION .text
 
@@ -40,6 +44,23 @@ SECTION .text
 	push r13
 	push r14
 	push r15
+%endmacro
+
+%macro pushStateNoRax 0
+    push rbx
+    push rcx
+    push rdx
+    push rbp
+    push rdi
+    push rsi
+    push r8
+    push r9
+    push r10
+    push r11
+    push r12
+    push r13
+    push r14
+    push r15
 %endmacro
 
 %macro popState 0
@@ -124,6 +145,36 @@ SECTION .text
 
 %endmacro
 
+sys_forceStart:
+	mov rsi,1 ;force start
+	call schedule
+	mov rsp, rax
+	iretq
+
+sys_changeProcess:
+	mov rdi,rsp
+	mov rsi,0 ;start not forced
+	call schedule
+	mov rsp,rax
+	iretq
+
+_initialize_stack_frame:
+	mov r8,rsp
+	mov rsp, rdx
+	mov rax,rsi
+	push 0x0
+	push rdx
+	push 0x202
+	push 0x08
+	push rdi
+	mov rdi, rsi
+	mov rsi,rcx
+	push 0x0
+	pushStateNoRax
+	mov rax, rsp
+	mov rsp,r8
+	ret
+
 ;se llenan
 ;%rdi, %rsi, %rdx, %rcx, %r8 y %r9 
 ;necesito
@@ -131,21 +182,14 @@ SECTION .text
 ;syscalls 
 
 _syscallHandler:
-	push rsi
-
-	lea rsi,[rsp+8]
-	mov [sysRegisters+8*0],rsi  ;save rsp
-
-	pop rsi
-
 	push rdi
-	mov [sysRegisters+8*1],rax
-	mov [sysRegisters+8*2],rdi
-	mov [sysRegisters+8*3],rsi
-	mov [sysRegisters+8*4],rdx
-	mov [sysRegisters+8*5],r10
-	mov [sysRegisters+8*6],r8
-	mov [sysRegisters+8*7],r9
+	mov [sysRegisters+8*0],rax
+	mov [sysRegisters+8*1],rdi
+	mov [sysRegisters+8*2],rsi
+	mov [sysRegisters+8*3],rdx
+	mov [sysRegisters+8*4],r10
+	mov [sysRegisters+8*5],r8
+	mov [sysRegisters+8*6],r9
 
 	mov rdi,sysRegisters
 	call sysCallDispatcher
@@ -183,6 +227,8 @@ picSlaveMask:
     out	0A1h,al
     pop     rbp
     retn
+
+
 
 
 
@@ -255,3 +301,5 @@ SECTION .bss
 		rer13 resq 1
 		rer14 resq 1
 		rer15 resq 1
+
+	

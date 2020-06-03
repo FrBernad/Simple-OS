@@ -7,10 +7,15 @@
 #include <staticQueue.h>
 #include <applications.h>
 
+typedef struct{
+    void * rsp;
+    void * rbp;
+    t_screenID screenID;
+}t_PCB;
+
 extern t_queue taskManager;
 
 void addProcess(t_application* app);
-void changeProcess(uint64_t * stackframe);
-void runProcess(uint64_t* stackframe);
+uint64_t schedule(uint64_t oldRSP, int forceStart);
 
 #endif
