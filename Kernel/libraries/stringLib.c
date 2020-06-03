@@ -25,6 +25,12 @@ void printHex(uint64_t num) {
       printString(buffer);
 }
 
+void printHexWC(uint64_t num, t_colour bgColour, t_colour fontColour) {
+      char buffer[10];
+      uintToBase(num, buffer, 16);
+      printStringWC(buffer, bgColour, fontColour);
+}
+
 void printInt(uint64_t num) {
       char buffer[10];
       uintToBase(num, buffer, 10);

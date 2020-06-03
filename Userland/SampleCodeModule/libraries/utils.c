@@ -235,7 +235,7 @@ void strToDouble(char * numStr, int * error, double * result){
       }
 }
 
-
+// https://www.geeksforgeeks.org/convert-floating-point-number-string/
 void doubleToString(char *res, double total,int afterpoint) {
       int sign = 0;
       if(total<0){
@@ -264,7 +264,7 @@ void doubleToString(char *res, double total,int afterpoint) {
             intToStr((int)fpart, res + sign + i + 1, afterpoint);
       }
 }
-
+// https://www.geeksforgeeks.org/convert-floating-point-number-string/
 void reverse(char *str, int len) {
       int i = 0, j = len - 1, temp;
       while (i < j) {
@@ -275,7 +275,7 @@ void reverse(char *str, int len) {
             j--;
       }
 }
-
+// https://www.geeksforgeeks.org/convert-floating-point-number-string/
 // Converts a given integer x to string str[].
 // d is the number of digits required in the output.
 // If d is more than the number of digits in x,

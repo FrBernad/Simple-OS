@@ -4,6 +4,8 @@
 #include <stringLib.h>
 #include <utils.h>
 
+#define EPSILON 0.0000000001
+
 static const int precedenceMx[5][6] = {
    //+, -, *, %, (, )
     {1, 1, 0, 0, 0, 1},  //+
@@ -17,8 +19,7 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error);
 static void putOperator(char operator, t_stack *operatorsStack, t_buffer *postfix, int *error);
 static int hasToPop(char peek, char current);
 static int getPrecedence(char c);
-static void operate(double left, double right, char *operator, double * result);
-
+static void operate(double left, double right, char *operator, double * result, int * error);
 
 //TODO:ARROBA
 
@@ -42,27 +43,28 @@ void getValue(char *expression, int *error, char * result) {
             } else {
                   if (IS_OPERAND(*token)) {
                         if (numStack.size < 2) {
-                              *error = 1;
+                              *error = INVALID_EXP;
                               break;
                         }
                         double left, right, res;
                         stackPop(&numStack, &right);
 
                         stackPop(&numStack, &left);
-                        operate(left, right, token,&res);
+                        operate(left, right, token,&res,error);
+                        if(*error){
+                              return;
+                        }
                         stackPush(&numStack, &res);
                   }
             }
       }
       if(numStack.size != 1){
-            *error = 1;
+            *error = INVALID_EXP;
       }
-
-      strtok(0, 0, ' ');
-
       if (*error) {
             return;
       }
+      strtok(0, 0, ' ');
 
      double total;
      stackPop(&numStack, &total);
@@ -88,7 +90,7 @@ static void toPostfix(char *expression, t_buffer *postfix, int *error) {
                         return;
                   }
             } else {
-                  *error = 1;
+                  *error = INVALID_EXP;
                   return;
             }
             for (int i = 0; i < BUFFER_SIZE; i++) {
@@ -120,7 +122,7 @@ static void putOperator(char operator, t_stack *operatorsStack, t_buffer *postfi
       }
       if (operator== ')') {
             if (stackIsEmpty(operatorsStack)) {
-                  *error = 1;
+                  *error = INVALID_EXP;
                   return;
             }
             stackPop(operatorsStack, &popOp);
@@ -155,10 +157,10 @@ static int getPrecedence(char c) {
             case ')':
                   return CLOSE;
       }
-      return -1;
+      return INVALID_EXP;
 }
 
-static void operate(double left, double right, char *operator, double * result){
+static void operate(double left, double right, char *operator, double * result, int * error){
       switch (*operator) {
             case '+':
                   *result = left + right;
@@ -170,7 +172,11 @@ static void operate(double left, double right, char *operator, double * result){
                   *result = left * right;
                   break;
             case '%':
-                  *result = left / right;
+                  if (right < EPSILON && right > -EPSILON) {
+                       *error=DIV_BY_ZERO;
+                  } else {
+                        *result = left / right;
+                  }
                   break;
       }
 }

@@ -8,9 +8,11 @@
 
 static t_application processes[MAX_PROCESSES];
 
-t_queue taskManager = {processes, 0, -1, 0, MAX_PROCESSES, POINTER + INTEGER};
+static uint8_t stacks[MAX_PROCESSES][4 * MB],stackIndex=0;
+t_queue taskManager = {processes, 0, -1, 0, MAX_PROCESSES, POINTER + POINTER + INTEGER + POINTER};
 
 void addProcess(t_application* app) {
+      // app->stack=stacks[stackIndex++];
       queueInsert(&taskManager, app);
 }
 
@@ -22,7 +24,7 @@ void changeProcess(uint64_t* stackframe) {
       changeBuffer(nextProcess.screenID);
       queueInsert(&taskManager, &currentProcess);
       stackframe[0] = (uint64_t)nextProcess.app;
-      stackframe[3] = (uint64_t)nextProcess.stack;
+      // stackframe[3] = (uint64_t)nextProcess.stack;
 }
 
 void runProcess(uint64_t* stackframe) {
@@ -31,5 +33,5 @@ void runProcess(uint64_t* stackframe) {
       changeScreen(currentProcess.screenID);
       changeBuffer(currentProcess.screenID);
       stackframe[0] = (uint64_t)currentProcess.app;
-      stackframe[3] = (uint64_t)currentProcess.stack;
+      // stackframe[3] = (uint64_t)currentProcess.stack;
 }

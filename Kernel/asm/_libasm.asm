@@ -50,6 +50,7 @@ cpuModel:
 ;shr dest, src	Intel Syntax
 ;Logical shift dest to the right by src bits.
 
+
 cpuTemp:
 	push rbp
 	mov rbp, rsp
@@ -61,18 +62,17 @@ cpuTemp:
 	mov rcx,0
 	mov ecx, 0x19C ;codigo que corresponde a THERMAL STATUS
 	rdmsr          ;me deja en eax la parte baja del msr solicitado, que en este caso es la unica que me interesa
-
 	shr rax,16                          ;shifteo que usaria para quedarme con los bits que me importan
-	and rax,0x7 ;0x0000000000000007     ;set in rax last 7 bytes digital readout
+	and rax,0x7F ;0x00000000000007F     ;set in rax last 7 bytes digital readout (22:16)
 
 	mov rdi,rax							;backup digital readout
 
 	mov rcx,0
 	mov rax,0
 	mov ecx,0x1A2
-	rdmsr                              ;access DTS_THERMAL_PROFILE msr
+	rdmsr                             ;access DTS_THERMAL_PROFILE msr
 	shr rax,16                         ;shifteo que usaria para quedarme con los bits que me importan
-	and rax,0x8 ;0x0000000000000008    ;set in rax last 8 bytes of TCC ACTIVATION TEMP
+	and rax,0xFF ;0x00000000000000FF    ;set in rax last 8 bytes of TCC ACTIVATION TEMP (23:16)
 
 	sub rax,rdi
 

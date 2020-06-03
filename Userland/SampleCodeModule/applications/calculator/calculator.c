@@ -1,12 +1,12 @@
 #include <appManager.h>
 #include <buffer.h>
 #include <calculator.h>
+#include <expressionAnalyzer.h>
 #include <keys.h>
-#include <stringLib.h>
 #include <lib.h>
+#include <stringLib.h>
 #include <systemCalls.h>
 #include <utils.h>
-#include <expressionAnalyzer.h>
 
 static void initCalculator();
 static void calcText();
@@ -33,7 +33,7 @@ void runCalculator() {
       }
 }
 
-static void processChar(char c){
+static void processChar(char c) {
       if (c != 0) {
             staticputchar(' ');  //remove blink
             switch (c) {
@@ -55,7 +55,7 @@ static void processChar(char c){
                         break;
                   case '\b':
                         if (calcBuffer.index > 0) {
-                              calcBuffer.buffer[--calcBuffer.index] = 0;  //i pongo a-- se caga pq accedo a index=BUFFER_SIZE
+                              calcBuffer.buffer[--calcBuffer.index] = 0;  //pongo -- para evitar acceder a index=BUFFER_SIZE
                               deletechar();
                         }
                         break;
@@ -70,20 +70,32 @@ static void processChar(char c){
             }
       }
 }
+
+void resetCalculator() {
+      started = 0;
+      cleanBuffer(&calcBuffer);
+      runCalculator();
+}
+
 void evaluate(char* expression) {
       int error = 0;
-      char result[BUFFER_SIZE]={0};
-      getValue(expression, &error,result);
+      char result[BUFFER_SIZE] = {0};
+      getValue(expression, &error, result);
       if (!error) {
             printStringLn(result);
       } else {
             putchar('\n');
-            printStringLn("Invalid expression");
+            printStringWC("Error: ", BLACK, RED);
+            if (error == INVALID_EXP) {
+                  printStringWC("invalid expression\n", BLACK, RED);
+            } else if (error == DIV_BY_ZERO) {
+                  printStringWC("division by zero is undefined\n", BLACK, RED);
+            }
       }
       putchar('\n');
 }
 
-static void initCalculator(){
+static void initCalculator() {
       calcText();
       started = 1;
 }

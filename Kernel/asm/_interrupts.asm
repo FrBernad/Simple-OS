@@ -84,8 +84,8 @@ SECTION .text
 
 	mov [expRegisters+8*7],rsi ;save rsi
 
-	lea rsi,[rsp+16]             ;get rsp in rsi
-	mov [expRegisters+8*0],rsi  ;save rsp
+	lea rsi,[rsp+16]             ;get rsp in rsi (STACKFRAME)
+	mov [expRegisters+8*0],rsi   ;save rsp
 
 	mov [expRegisters+8*1],rbp  
 	
@@ -223,7 +223,6 @@ haltcpu:
 	cli
 	hlt
 	ret
-
 
 SECTION .bss
 	aux resq 1

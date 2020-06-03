@@ -21,11 +21,8 @@ static char username[BUFFER_SIZE] = "USER";
 static int blink = 1, started = 0;
 static t_registers registers;
 
-//TODO: RIP
-//TODO: PONER BIBLIOGRAFIA DE FUNCIONES
-
+//TODO: VUELTA EXCEPCIONES
 //TODO: INVALID OP HACE RQ HAGA INVALID OP
-
 //TODO: REVISAR TEMP
 
 void runShell() {
@@ -75,6 +72,12 @@ static void initShell() {
 
       shellText();
       started = 1;
+}
+
+void resetShell(){
+      started = 0;
+      cleanBuffer(&shellBuffer);
+      runShell();
 }
 
 static void processChar(char c) {

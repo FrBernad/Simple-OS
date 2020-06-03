@@ -5,5 +5,6 @@
 #define DOUBLE 8
 #define CHAR 1
 #define POINTER 8
+#define MB 1024
 
 #endif

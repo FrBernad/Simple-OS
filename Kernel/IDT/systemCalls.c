@@ -21,7 +21,6 @@ uint8_t sys_RTCTime(t_timeInfo tInfo) {
 
 int sys_temp() {
       return cpuTemp();
-      //return 80;
 }
 
 void sys_write(char* string, uint8_t lenght, t_colour bgColour, t_colour fontColour){

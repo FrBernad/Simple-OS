@@ -140,6 +140,7 @@ void showArgs(int argc, char** args) {
             printString("]=");
             printStringLn(args[i]);
       }
+      putchar('\n');
 }
 
 static void memToString(char* buffer, uint8_t* mem, int bytes) {

@@ -4,5 +4,6 @@
 #include <buffer.h>
 
 void runShell();
+void resetShell();
 
 #endif
