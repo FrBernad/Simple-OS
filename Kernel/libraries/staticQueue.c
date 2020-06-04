@@ -12,6 +12,7 @@ void queuePeek(t_queue* queue, void* data) {
       }
 }
 
+
 int queueIsEmpty(t_queue* queue) {
       return queue->size == 0;
 }
@@ -44,9 +45,6 @@ void queueRemoveData(t_queue* queue, void* data) {
             if (queue->front == queue->dim) {
                   queue->front = 0;
             }
-            // printStringLn("Removed: ");
-            // sys_write((char*)data, 1, BLACK, WHITE);
-            // putchar('\n');
             queue->size--;
       } else {
             memset(data, 0, queue->dataSize);

@@ -2,7 +2,6 @@
 #define SYSTEM_CALLS
 
 //dataTypes
-#include <applications.h>
 #include <RTCTime.h>
 #include <stdint.h>
 #include <colours.h>

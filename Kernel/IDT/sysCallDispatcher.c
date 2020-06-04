@@ -1,7 +1,6 @@
-#include <RTCTime.h>
-#include <applications.h>
-#include <stdint.h>
 #include <sysCallDispatcher.h>
+#include <RTCTime.h>
+#include <stdint.h>
 #include <systemCalls.h>
 #include <stringLib.h>
 #include <timerTick.h>
@@ -16,9 +15,8 @@
 #define SYS_GETCHAR_ID 5
 #define SYS_CLEAR_ID 6
 #define SYS_TICKS_ELAPSED_ID 7
-#define SYS_CHANGE_APP_ID 8
-#define SYS_LOAD_APP_ID 9
-#define SYS_RUN_ID 10
+#define SYS_LOAD_APP_ID 8
+#define SYS_RUN_ID 9
 
 uint64_t sysCallDispatcher(t_registers *r) {
       if (r->rax >= 0 && r->rax <= SYSCALLS){
@@ -55,12 +53,8 @@ uint64_t sysCallDispatcher(t_registers *r) {
                         return ticksElapsed();
                         break;
 
-                  case SYS_CHANGE_APP_ID:
-                        sys_changeProcess();
-                        break;
-
                   case SYS_LOAD_APP_ID:
-                        addProcess((t_application*)r->rdi);
+                        addProcess((t_PCB*)r->rdi);
                         break;
 
                   case SYS_RUN_ID:

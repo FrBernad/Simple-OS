@@ -5,8 +5,6 @@ GLOBAL sys_getMem
 
 section .text
 
-
-
 cpuVendor:
 	push rbp
 	mov rbp, rsp

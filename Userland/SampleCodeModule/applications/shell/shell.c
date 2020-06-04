@@ -1,14 +1,14 @@
-#include <appManager.h>
+#include <taskManager.h>
 #include <buffer.h>
 #include <commands.h>
-#include <registers.h>
 #include <keys.h>
+#include <lib.h>
+#include <registers.h>
 #include <shell.h>
 #include <stdint.h>
 #include <stringLib.h>
 #include <systemCalls.h>
 #include <utils.h>
-#include <lib.h>
 
 static void initShell();
 static void shellText();
@@ -18,31 +18,23 @@ static void processChar(char c);
 static t_command commands[COMMANDS];
 static t_buffer shellBuffer = {{0}, 0};
 static char username[BUFFER_SIZE] = "USER";
-static int blink = 1, started = 0;
 static t_registers registers;
 
-//TODO: VUELTA EXCEPCIONES
-//TODO: INVALID OP HACE RQ HAGA INVALID OP
+//TODO: checkear kill process que vuelva a resetar proceso
+//TODO: syscall exit al final runshel y calc
+//TODO: cambiar halt y blink a kernel driver PREGUNTAR A NICO
 //TODO: REVISAR TEMP
+//TODO: achicar syscalls
+//TODO: hacer lo de inforeg con una tecla
 
 void runShell() {
-      if (!started) {
-            initShell();
-      }
+      initShell();
       char c;
       while (1) {
-            c=0;
-            while(c==0){
-                  halt();
-                  getRegistersData(registers.data);
-                  c = getchar();
-
-                  if (sys_ticksElapsed() % 12 == 0) {
-                        blinkCursor(&blink);
-                  }
-            }
+            c = getchar();
             processChar(c);
       }
+    //  sys_exit();
 }
 
 static void initShell() {
@@ -70,19 +62,12 @@ static void initShell() {
             strcpy(regNames[i], registers.name[i]);
       }
 
-      shellText();
-      started = 1;
-}
-
-void resetShell(){
-      started = 0;
       cleanBuffer(&shellBuffer);
-      runShell();
+      shellText();
 }
 
 static void processChar(char c) {
       if (c != 0) {
-            staticputchar(' ');  //remove blink
             switch (c) {
                   case CHANGE_SCREEN_0:
                         sys_changeApp();
@@ -186,4 +171,3 @@ void inforeg(int argc, char** args) {
       }
       putchar('\n');
 }
-

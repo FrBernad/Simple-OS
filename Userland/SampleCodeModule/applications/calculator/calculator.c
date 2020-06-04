@@ -1,4 +1,4 @@
-#include <appManager.h>
+#include <taskManager.h>
 #include <buffer.h>
 #include <calculator.h>
 #include <expressionAnalyzer.h>
@@ -13,29 +13,18 @@ static void calcText();
 static void processChar(char c);
 
 static t_buffer calcBuffer = {{0}, 0};
-static int blink = 1, started = 0;
 
 void runCalculator() {
-      if (!started) {
-            initCalculator();
-      }
+      initCalculator();
       char c;
       while (1) {
-            c = 0;
-            while (c == 0) {
-                  halt();
-                  c = getchar();
-                  if (sys_ticksElapsed() % 12 == 0) {
-                        blinkCursor(&blink);
-                  }
-            }
+            c = getchar();
             processChar(c);
       }
 }
 
 static void processChar(char c) {
       if (c != 0) {
-            staticputchar(' ');  //remove blink
             switch (c) {
                   case CHANGE_SCREEN_0:
                         break;
@@ -71,12 +60,6 @@ static void processChar(char c) {
       }
 }
 
-void resetCalculator() {
-      started = 0;
-      cleanBuffer(&calcBuffer);
-      runCalculator();
-}
-
 void evaluate(char* expression) {
       int error = 0;
       char result[BUFFER_SIZE] = {0};
@@ -96,8 +79,9 @@ void evaluate(char* expression) {
 }
 
 static void initCalculator() {
+      cleanBuffer(&calcBuffer);
+      sys_clear();
       calcText();
-      started = 1;
 }
 
 static void calcText() {

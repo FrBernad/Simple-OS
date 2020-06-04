@@ -10,7 +10,6 @@ GLOBAL sys_ticksElapsed
 GLOBAL sys_changeApp
 GLOBAL sys_loadApp
 GLOBAL sys_run
-GLOBAL halt
 GLOBAL cpuVendor
 GLOBAL cpuModel
 GLOBAL getRegistersData
@@ -136,12 +135,7 @@ sys_changeApp:
     push rbp
     mov rbp, rsp
 
-    push rax
-
-    mov rax,8
-    int 80h
-
-    pop rax
+    int 81h
 
     mov rsp, rbp
     pop rbp
@@ -154,7 +148,7 @@ sys_loadApp:
 
     push rax
 
-    mov rax,9
+    mov rax,8
     int 80h
 
     pop rax
@@ -170,7 +164,7 @@ sys_run:
 
     push rax
 
-    mov rax,10
+    mov rax,9
     int 80h
 
     pop rax
@@ -178,10 +172,6 @@ sys_run:
     mov rsp, rbp
     pop rbp
 
-    ret
-
-halt:
-    hlt
     ret
 
 cpuVendor:

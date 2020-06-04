@@ -1,4 +1,4 @@
-#include <appManager.h>
+#include <taskManager.h>
 #include <staticStack.h>
 #include <buffer.h>
 #include <stringLib.h>
@@ -7,6 +7,5 @@
 
 int main() {
       initApps();
-      while(1);
       return 0;
 }

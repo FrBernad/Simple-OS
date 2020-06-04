@@ -170,15 +170,6 @@ void *memcpy(void *destination, const void *source, uint64_t length) {
       return destination;
 }
 
-void blinkCursor(int *blink){
-      if (*blink) {
-            staticputchar('|');
-            *blink = 0;
-      } else {
-            staticputchar(' ');
-            *blink = 1;
-      }
-}
 
 int isNum(char *str){
       int index = 0;

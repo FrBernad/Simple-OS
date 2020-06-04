@@ -14,6 +14,7 @@ typedef struct
 {
     int defaultBGColour;
     int defaultFontColour;
+    int blink;
     uint32_t currentX;
     uint32_t currentY;
     uint32_t offset;

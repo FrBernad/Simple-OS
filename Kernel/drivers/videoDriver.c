@@ -57,6 +57,7 @@ void initVideoDriver(t_colour BGColour, t_colour FontColour) {
       t_screen screen1;
       screen1.defaultBGColour = BGColour;
       screen1.defaultFontColour = FontColour;
+      screen1.blink = 0;
       screen1.currentX = 0;
       screen1.currentY = 0;
       screen1.offset = 2 * CHAR_WIDTH;
@@ -67,6 +68,7 @@ void initVideoDriver(t_colour BGColour, t_colour FontColour) {
       t_screen screen2;
       screen2.defaultBGColour = BGColour;
       screen2.defaultFontColour = FontColour;
+      screen2.blink = 0;
       screen2.currentX = 0;
       screen2.currentY = 0;
       screen2.offset = SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH;
@@ -210,6 +212,21 @@ void clearScreen(){
     }
     currentScreen->currentX = 0;
     currentScreen->currentY = 0;
+}
+
+void blinkCursor(){
+      if (currentScreen->blink) {
+            staticputchar('|');
+            currentScreen->blink = 0;
+      } else {
+            staticputchar(' ');
+            currentScreen->blink = 1;
+      }
+}
+
+void stopBlink(){
+    currentScreen->blink=0;
+    staticputchar(' ');
 }
 
 static int getPixelDataByPosition(uint32_t x, uint32_t y)

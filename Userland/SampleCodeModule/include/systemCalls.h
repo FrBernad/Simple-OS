@@ -3,7 +3,7 @@
 
 //dataTypes
 #include <RTCTime.h>
-#include <applications.h>
+#include <taskManager.h>
 #include <colours.h>
 #include <cpuInfo.h>
 #include <stdint.h>
@@ -22,7 +22,7 @@ void sys_clear();
 int sys_ticksElapsed();
 
 void sys_changeApp();
-void sys_loadApp(t_application* app);
+void sys_loadApp(t_PCB* app);
 
 void sys_run();
 

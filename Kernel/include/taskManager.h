@@ -4,10 +4,11 @@
 #define MAX_PROCESSES 2
 
 #include <stdint.h>
+#include <screens.h>
 #include <staticQueue.h>
-#include <applications.h>
 
 typedef struct{
+    void * entryPoint;
     void * rsp;
     void * rbp;
     t_screenID screenID;
@@ -15,7 +16,8 @@ typedef struct{
 
 extern t_queue taskManager;
 
-void addProcess(t_application* app);
-uint64_t schedule(uint64_t oldRSP, int forceStart);
+void* schedule(void* oldRSP, int forceStart);
+void addProcess(t_PCB* process);
+void killCurrentProcess();
 
 #endif

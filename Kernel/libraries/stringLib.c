@@ -34,6 +34,7 @@ void printHexWC(uint64_t num, t_colour bgColour, t_colour fontColour) {
 void printInt(uint64_t num) {
       char buffer[10];
       uintToBase(num, buffer, 10);
+      printString("\nrsp: ");
       printString(buffer);
 }
 
