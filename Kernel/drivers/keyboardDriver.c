@@ -1,12 +1,19 @@
-#include <buffer.h>
-#include <interrupts.h>
 #include <keyboardDriver.h>
-#include <keyboardInfo.h>
-#include <videoDriver.h>
+
+//dataTypes
+#include <buffer.h>
 #include <keys.h>
+
+//functions
+#include <interrupts.h>
+#include <videoDriver.h>
+#include <keyboardInfo.h>
 #include <staticQueue.h>
 #include <stdint.h>
 #include <utils.h>
+#include <lib.h>
+
+#define REGISTERS 15
 
 static uint8_t action(uint8_t scanCode);
 
@@ -16,9 +23,9 @@ static char pressCodes[KEYS][2] =
 static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, l_ctrl = 0;
 static char buffer1[MAX_SIZE] = {0}, buffer2[MAX_SIZE] = {0};
 static t_queue buffers[MAX_SCREENS] = {{buffer1, 0, -1, 0, MAX_SIZE, sizeof(char)}, {buffer2, 0, -1, 0, MAX_SIZE, sizeof(char)}};
-static t_queue* currentBuffer = &buffers[1];
+static t_queue* currentBuffer;
 
-char cs0 = CHANGE_SCREEN_0, cs1 = CHANGE_SCREEN_1, clearS = CLEAR_SCREEN;
+t_specialKeyCode cs0 = CHANGE_SCREEN_0, cs1 = CHANGE_SCREEN_1, clearS = CLEAR_SCREEN, snapShot = SNAP_SHOT;
 
 void keyboardHandler() {
       if (hasKey()) {
@@ -45,23 +52,17 @@ void keyboardHandler() {
                                           if (l_ctrl) {
                                                 if (pressCodes[scanCode][0] == '0' + SCREEN_0) {
                                                       queueInsert(currentBuffer, &cs0);
-                                                      //currentBuffer->buffer[currentBuffer->index] = CHANGE_SCREEN_0;
                                                 } else if (pressCodes[scanCode][0] == '0' + SCREEN_1) {
                                                       queueInsert(currentBuffer, &cs1);
-                                                      // currentBuffer->buffer[currentBuffer->index] = CHANGE_SCREEN_1;
                                                 } else if (pressCodes[scanCode][0] == 'l') {
                                                       queueInsert(currentBuffer, &clearS);
-                                                      //  currentBuffer->buffer[currentBuffer->index] = CLEAR_SCREEN;
+                                                } else if (pressCodes[scanCode][0] == 's'){
+                                                      updateSnapshot();
                                                 }
                                           } else {
-                                                // char character;
                                                 if (!IS_LETTER(pressCodes[scanCode][0])) {
-                                                      // character = pressCodes[scanCode][specialChars];
-                                                      // currentBuffer->buffer[currentBuffer->index] = character;
                                                       queueInsert(currentBuffer, &pressCodes[scanCode][specialChars]);
                                                 } else {
-                                                      // character = pressCodes[scanCode][ABS(capsLock - (specialChars))];
-                                                      //currentBuffer->buffer[currentBuffer->index] = character;
                                                       queueInsert(currentBuffer, &pressCodes[scanCode][ABS(capsLock - (specialChars))]);
                                                 }
                                           }
@@ -98,6 +99,7 @@ char getchar() {
 void changeBuffer(t_screenID screen) {
       currentBuffer = &buffers[screen];
 }
+
 
 static uint8_t action(uint8_t scanCode) {
       if (scanCode >= 0x01 && scanCode <= 0x3A)

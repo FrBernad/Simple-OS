@@ -63,8 +63,8 @@ void initVideoDriver(t_colour BGColour, t_colour FontColour) {
       screen1.offset = 2 * CHAR_WIDTH;
       screen1.height = SCREEN_HEIGHT;
       screen1.width = SCREEN_WIDTH / 2 - 3 * CHAR_WIDTH - 2 * CHAR_WIDTH;
-
       screens[0] = screen1;
+
       t_screen screen2;
       screen2.defaultBGColour = BGColour;
       screen2.defaultFontColour = FontColour;
@@ -74,32 +74,26 @@ void initVideoDriver(t_colour BGColour, t_colour FontColour) {
       screen2.offset = SCREEN_WIDTH / 2 + 4 * CHAR_WIDTH;
       screen2.height = SCREEN_HEIGHT;
       screen2.width = SCREEN_WIDTH / 2 - 2 * CHAR_WIDTH - 4 * CHAR_WIDTH;  //resto lo que agregue de margen en offset para compensar
-
       screens[1] = screen2;
 
       separateMainScreen();
-     currentScreen = &screens[1];
 }
 
 void changeScreen(t_screenID screen){
       currentScreen = &screens[screen];
-    //   printString("changed screen to screen: ");
-    //   printInt((int)screen);
-    //   putchar('\n');
 }
 
 void writePixel(uint32_t x, uint32_t y, t_colour colour)  //BGR
 {
-    char * currentFrame = (char*)((uint64_t)screen_info->framebuffer);  //casteo a iuint64 para evitar warnin
+    char * currentFrame = (char*)((uint64_t)screen_info->framebuffer);  //casteo a uint64 para evitar warning
     int offset = getPixelDataByPosition(x,y);
-    currentFrame[offset] = (char)((colour >> 16) & 0xFF); //BLUE
-    currentFrame[offset+1] = (char)((colour >> 8) & 0xFF);//GREEN
-    currentFrame[offset+2] = (char)(colour & 0xFF);//RED
+    currentFrame[offset] = (char)((colour >> 16) & 0xFF);  //BLUE
+    currentFrame[offset+1] = (char)((colour >> 8) & 0xFF); //GREEN
+    currentFrame[offset+2] = (char)(colour & 0xFF);        //RED
 }
 
 void printCharOnScreen(char c, t_colour bgColour, t_colour fontColour, int advance)
 {
-
     if (currentScreen->currentX != 0 && currentScreen->width - currentScreen->currentX < CHAR_WIDTH)
     {
         currentScreen->currentY += CHAR_HEIGHT;
@@ -189,7 +183,7 @@ void removeCharFromScreen(){
 
     currentScreen->currentX -= CHAR_WIDTH;
 
-    printCharOnScreen(' ', BLACK, WHITE, 0);//remove char
+    printCharOnScreen(' ', BLACK, WHITE, 0);  //remove char
 }
 
 void changeLineOnScreen(){
@@ -243,8 +237,3 @@ static void separateMainScreen(){
         }
     }
 }
-
-
-//00110010
-//each letter ocuppies 8*16=48pix my total is 1024*768=786.432 => total chars=16.384
-//in every row max chars = 1024/8=128

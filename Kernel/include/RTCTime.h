@@ -10,6 +10,5 @@ typedef enum {
 } t_timeInfo;
 
 uint8_t getDecimalTimeInfo(uint8_t info);
-uint8_t getBSDTimeInfo(uint8_t info);
 
 #endif

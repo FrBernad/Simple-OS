@@ -1,8 +1,6 @@
-#include <interrupts.h>
 #include <stringLib.h>
-#include <systemCalls.h>
 #include <taskManager.h>
-#include <utils.h>
+#include <lib.h>
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
@@ -18,8 +16,6 @@ static char* regNames[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ",
                            "R8: ", "RSI: ", "RDI: ", "RBP: ", "RDX: ", "RCX: ", "RBX: ",
                            "RAX: ", "RIP: ", "RSP: "};
 
-// extern t_queue taskManager;
-
 void exceptionDispatcher(int exception, void* stackframe) {
       switch (exception) {
             case ZERO_EXCEPTION_ID:
@@ -31,7 +27,8 @@ void exceptionDispatcher(int exception, void* stackframe) {
                   break;
       }
       printRegisters(stackframe);
-      killCurrentProcess();
+      putchar('\n');
+      resetCurrentProcess();
 }
 
 static void zero_division() {

@@ -1,7 +1,6 @@
 GLOBAL hasKey
 GLOBAL getKey
 
-
 section .text
 
 hasKey:

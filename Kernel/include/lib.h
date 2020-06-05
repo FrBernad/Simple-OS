@@ -8,7 +8,15 @@ void* memcpy(void* destination, const void* source, uint64_t length);
 
 char * cpuVendor(char * result);
 uint64_t cpuModel();
+
 int cpuTemp();
 void sys_getMem(uint64_t memDir, uint8_t* memData);
+uint8_t getBSDTimeInfo(uint8_t info);
+
+void updateSnapshot();
+uint64_t * getSnapshot();
+
+void sys_changeProcess();
+void sys_forceStart();
 
 #endif

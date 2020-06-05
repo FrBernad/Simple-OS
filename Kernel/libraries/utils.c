@@ -132,16 +132,3 @@ int strlen(char *str) {
       }
       return size;
 }
-
-// void inforeg() {
-//       t_register registers[REGISTERS];
-//       sys_inforeg(registers);
-//       for (int i = 0; i < REGISTERS; i++) {
-//             printString(" > ");
-//             printString(registers[i].name);
-//             putchar(':');
-//             printHex(registers[i].data);
-//             putchar('\n');
-//       }
-//       putchar('\n');
-// }

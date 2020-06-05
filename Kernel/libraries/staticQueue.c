@@ -1,8 +1,5 @@
-#include <colours.h>
-#include <lib.h>
 #include <staticQueue.h>
-#include <stringLib.h>
-#include <systemCalls.h>
+#include <lib.h>
 
 //https://www.tutorialspoint.com/data_structures_algorithms/queue_program_in_c.htm
 
@@ -12,6 +9,11 @@ void queuePeek(t_queue* queue, void* data) {
       }
 }
 
+void queueUpdateFirst(t_queue* queue, void* data) {
+      if (!(queueIsEmpty(queue))) {
+            memcpy((void*)((uint64_t)queue->queue + (queue->front * queue->dataSize)), data, queue->dataSize);
+      }
+}
 
 int queueIsEmpty(t_queue* queue) {
       return queue->size == 0;
@@ -33,9 +35,6 @@ void queueInsert(t_queue* queue, void* data) {
             memcpy((void*)((uint64_t)queue->queue + ((++queue->rear) * queue->dataSize)), data, queue->dataSize);
             queue->size++;
       }
-      // printStringLn("Inserted: ");
-      // sys_write((char*)data, 1, BLACK, WHITE);
-      // putchar('\n');
 }
 
 void queueRemoveData(t_queue* queue, void* data) {

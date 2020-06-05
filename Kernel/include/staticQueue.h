@@ -15,6 +15,7 @@ typedef struct {
 } t_queue;
 
 void queuePeek(t_queue* queue, void* data);
+void queueUpdateFirst(t_queue* queue, void* data);
 int queueIsEmpty(t_queue* queue);
 int queueIsFull(t_queue* queue);
 int queueSize(t_queue* queue);

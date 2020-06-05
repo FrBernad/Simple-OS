@@ -21,8 +21,6 @@ static int hasToPop(char peek, char current);
 static int getPrecedence(char c);
 static void operate(double left, double right, char *operator, double * result, int * error);
 
-//TODO:ARROBA
-
 void getValue(char *expression, int *error, char * result) {
       t_buffer postfix = {{0}, 0};
 

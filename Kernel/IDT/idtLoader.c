@@ -1,6 +1,7 @@
 #include <stdint.h>
 #include <idtLoader.h>
 #include <defs.h>
+#include <lib.h>
 #include <interrupts.h>
 
 #pragma pack(push)		/* Push de la alineación actual */

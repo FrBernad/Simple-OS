@@ -1,5 +1,4 @@
 #include <taskManager.h>
-#include <buffer.h>
 #include <calculator.h>
 #include <expressionAnalyzer.h>
 #include <keys.h>
@@ -8,22 +7,22 @@
 #include <systemCalls.h>
 #include <utils.h>
 
-static void initCalculator();
+static void initCalculator(t_calcData * calcData);
 static void calcText();
-static void processChar(char c);
-
-static t_buffer calcBuffer = {{0}, 0};
+static void processChar(char c, t_calcData* calcDatas);
 
 void runCalculator() {
-      initCalculator();
+      t_calcData calcData;
+      initCalculator(&calcData);
       char c;
       while (1) {
             c = getchar();
-            processChar(c);
+            processChar(c, &calcData);
       }
+      syscall(EXIT, 0, 0, 0, 0, 0, 0);
 }
 
-static void processChar(char c) {
+static void processChar(char c, t_calcData* calcData) {
       if (c != 0) {
             switch (c) {
                   case CHANGE_SCREEN_0:
@@ -32,27 +31,26 @@ static void processChar(char c) {
                         sys_changeApp();
                         break;
                   case CLEAR_SCREEN:
-                        sys_clear();
-                        cleanBuffer(&calcBuffer);
-                        calcText();
+                        syscall(RTC_TIME,HOURS,0,0,0,0,0);
+                        cleanBuffer(&calcData->buffer);
+                        calcText(calcData);
                         break;
                   case '=':
-                        putchar(c);
-                        evaluate(calcBuffer.buffer);
-                        cleanBuffer(&calcBuffer);
-                        calcText();
+                        evaluate(calcData->buffer.buffer);
+                        cleanBuffer(&calcData->buffer);
+                        calcText(calcData);
                         break;
                   case '\b':
-                        if (calcBuffer.index > 0) {
-                              calcBuffer.buffer[--calcBuffer.index] = 0;  //pongo -- para evitar acceder a index=BUFFER_SIZE
+                        if (calcData->buffer.index > 0) {
+                              calcData->buffer.buffer[--calcData->buffer.index] = 0;  //pongo -- para evitar acceder a index=BUFFER_SIZE
                               deletechar();
                         }
                         break;
 
                   default:
-                        if (calcBuffer.index < BUFFER_SIZE) {
+                        if (calcData->buffer.index < BUFFER_SIZE) {
                               if (IS_DIGIT(c) || IS_OPERAND(c) || c == ' ' || c == '.') {
-                                    calcBuffer.buffer[calcBuffer.index++] = c;
+                                    calcData->buffer.buffer[calcData->buffer.index++] = c;
                                     putchar(c);
                               }
                         }
@@ -64,6 +62,7 @@ void evaluate(char* expression) {
       int error = 0;
       char result[BUFFER_SIZE] = {0};
       getValue(expression, &error, result);
+      printString(" = ");
       if (!error) {
             printStringLn(result);
       } else {
@@ -78,12 +77,13 @@ void evaluate(char* expression) {
       putchar('\n');
 }
 
-static void initCalculator() {
-      cleanBuffer(&calcBuffer);
-      sys_clear();
-      calcText();
+static void initCalculator(t_calcData* calcData) {
+      cleanBuffer(&calcData->buffer);
+      strcpy("CALCULATOR", calcData->name);
+      calcText(calcData);
 }
 
-static void calcText() {
-      printString("calculator $ > ");
+static void calcText(t_calcData* calcData) {
+      printString(calcData->name);
+      printString(" $ > ");
 }

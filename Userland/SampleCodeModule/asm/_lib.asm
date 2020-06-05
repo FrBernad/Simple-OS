@@ -1,173 +1,69 @@
-GLOBAL sys_inforeg
-GLOBAL sys_getMem
-GLOBAL sys_RTCTime
-GLOBAL sys_temp
-GLOBAL sys_write
-GLOBAL sys_staticwrite
-GLOBAL sys_getchar
-GLOBAL sys_clear
-GLOBAL sys_ticksElapsed
+GLOBAL syscall
 GLOBAL sys_changeApp
-GLOBAL sys_loadApp
-GLOBAL sys_run
 GLOBAL cpuVendor
 GLOBAL cpuModel
-GLOBAL getRegistersData
 
 section .text
 
-sys_getMem:
+%macro pushStateNoRax 0
+	push rbx
+	push rcx
+	push rdx
+	push rbp
+	push rdi
+	push rsi
+	push r8
+	push r9
+	push r10
+	push r11
+	push r12
+	push r13
+	push r14
+	push r15
+%endmacro
+
+%macro popStateNoRax 0
+	pop r15
+	pop r14
+	pop r13
+	pop r12
+	pop r11
+	pop r10
+	pop r9
+	pop r8
+	pop rsi
+	pop rdi
+	pop rbp
+	pop rdx
+	pop rcx
+	pop rbx
+%endmacro
+
+syscall:
     push rbp
     mov rbp, rsp
+	pushStateNoRax
 
-    mov rax,0
+    mov rax,rdi
+    mov rdi, rsi
+    mov rsi,rdx
+    mov rdx,rcx
+    mov r10,r8
+    mov r8,r9
+	mov r9,[rbp+8]
     int 80h
 
-    mov rsp, rbp
+	popStateNoRax
+	mov rsp, rbp
     pop rbp
 
     ret
-
-sys_RTCTime:
-    push rbp
-    mov rbp, rsp
-
-    mov rax,1;POSIBLE FALLO PQ NO RECIBO PUNTERO
-    int 80h
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_temp:
-    push rbp
-    mov rbp, rsp
-
-    mov rax,2
-    int 80h
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_write:
-    push rbp
-    mov rbp, rsp
-
-    push rax
-    push r10
-
-    mov r10,rcx
-    mov rax,3
-    int 80h
-
-    pop r10
-    pop rax
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_staticwrite:
-    push rbp
-    mov rbp, rsp
-
-    push rax
-    push r10
-
-    mov r10,rcx
-    mov rax,4
-    int 80h
-
-    pop r10
-    pop rax
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_getchar:
-    push rbp
-    mov rbp, rsp
-
-    mov rax,5
-    int 80h
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_clear:
-    push rbp
-    mov rbp, rsp
-
-    push rax
-
-    mov rax,6
-    int 80h
-
-    pop rax
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_ticksElapsed:
-    push rbp
-    mov rbp, rsp
-
-    mov rax,7
-    int 80h
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
 
 sys_changeApp:
     push rbp
     mov rbp, rsp
 
     int 81h
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_loadApp:
-    push rbp
-    mov rbp, rsp
-
-    push rax
-
-    mov rax,8
-    int 80h
-
-    pop rax
-
-    mov rsp, rbp
-    pop rbp
-
-    ret
-
-sys_run:
-    push rbp
-    mov rbp, rsp
-
-    push rax
-
-    mov rax,9
-    int 80h
-
-    pop rax
 
     mov rsp, rbp
     pop rbp
@@ -215,33 +111,3 @@ cpuModel:
 	mov rsp, rbp
 	pop rbp
 	ret
-
- getRegistersData:
-    push rbp
-    mov rbp,rsp
-
-    push rax
-
-    mov [rdi+8],rax
-    mov rax,[rbp+8]      ; cargo RIP
-    mov [rdi],rax        
-    mov [rdi+8*2],rcx
-    mov [rdi+8*3],rdx
-    mov [rdi+8*4],rbx
-    mov [rdi+8*5],rsi
-    mov [rdi+8*6],rdi
-    mov [rdi+8*7],rsp
-    mov [rdi+8*8],rbp
-    mov [rdi+8*9],r8
-    mov [rdi+8*10],r9
-    mov [rdi+8*11],r10
-    mov [rdi+8*12],r11
-    mov [rdi+8*13],r12
-    mov [rdi+8*14],r13
-    mov [rdi+8*15],r14
-    mov [rdi+8*16],r15
-
-    pop rax
-    
-    leave
-    ret

@@ -2,7 +2,6 @@
 #define SYS_CALL_DISPATCHER
 
 #include <stdint.h>
-#include <interrupts.h>
 
 typedef struct
 {

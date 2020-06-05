@@ -10,7 +10,8 @@
 typedef struct{
     void * entryPoint;
     void * rsp;
-    void * rbp;
+    void* rbp;
+    int stackID;
     t_screenID screenID;
 }t_PCB;
 
@@ -19,5 +20,6 @@ extern t_queue taskManager;
 void* schedule(void* oldRSP, int forceStart);
 void addProcess(t_PCB* process);
 void killCurrentProcess();
+void resetCurrentProcess();
 
 #endif

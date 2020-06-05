@@ -1,5 +1,5 @@
-#include <RTCTime.h>
 #include <commands.h>
+#include <RTCTime.h>
 #include <cpuInfo.h>
 #include <lib.h>
 #include <registers.h>
@@ -10,7 +10,7 @@
 
 static void memToString(char* buffer, uint8_t* mem, int bytes);
 
-void time(int argc, char** args) {
+void time(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -18,9 +18,9 @@ void time(int argc, char** args) {
       }
       
       char timeFormat[3][3];
-      uint8_t hours = sys_RTCTime(HOURS);
-      uint8_t mins = sys_RTCTime(MINUTES);
-      uint8_t secs = sys_RTCTime(SECONDS);
+      uint8_t hours = syscall(RTC_TIME,HOURS,0,0,0,0,0);
+      uint8_t mins = syscall(RTC_TIME,MINUTES,0,0,0,0,0);
+      uint8_t secs = syscall(RTC_TIME,SECONDS,0,0,0,0,0);
       printString(" >Current time: ");
       intToStr(hours, timeFormat[0], 2);
       intToStr(mins, timeFormat[1], 2);
@@ -36,7 +36,7 @@ void time(int argc, char** args) {
       putchar('\n');
 }
 
-void cpuInfo(int argc, char** args) {
+void cpuInfo(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -54,7 +54,7 @@ void cpuInfo(int argc, char** args) {
       putchar('\n');
 }
 
-void printmem(int argc, char** args) {
+void printmem(int argc, char** args,  t_shellData* shellData) {
       if (argc != 1) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -72,7 +72,7 @@ void printmem(int argc, char** args) {
       int bytes = 32;
 
       uint8_t memData[bytes];
-      sys_getMem(memDir, memData);
+      syscall(GET_MEM, memDir,(uint64_t)memData, 0, 0, 0, 0);
 
       char byteStr[bytes * 2];
       memToString(byteStr, memData, bytes);
@@ -100,19 +100,19 @@ void printmem(int argc, char** args) {
       putchar('\n');
 }
 
-void cpuTemp(int argc, char** args) {
+void cpuTemp(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
             return;
       }
       printString("CPU temp:  ");
-      printInt(sys_temp());
+      printInt(syscall(TEMP, 0, 0, 0, 0, 0, 0));
       printStringLn("C");
       putchar('\n');
 }
 
-void checkZeroException(int argc, char** args) {
+void checkZeroException(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -124,7 +124,7 @@ void checkZeroException(int argc, char** args) {
       }
 }
 
-void checkInvalidOpcodeException(int argc, char** args) {
+void checkInvalidOpcodeException(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -133,7 +133,7 @@ void checkInvalidOpcodeException(int argc, char** args) {
       __asm__("ud2");  // https://hjlebbink.github.io/x86doc/html/UD2.html
 }
 
-void showArgs(int argc, char** args) {
+void showArgs(int argc, char** args, t_shellData* shellData) {
       for (int i = 0; i < argc && i < MAX_ARGS; i++) {
             printString("arg[");
             printInt(i);

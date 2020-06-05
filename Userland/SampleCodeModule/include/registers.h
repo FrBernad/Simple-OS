@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-#define REGISTERS 17
-#define REG_NAME 5
+#define REGISTERS 15
+#define REG_NAME 10
 
 typedef struct {
-      uint64_t data[REGISTERS];
+      uint64_t * data;
       char name[REGISTERS][REG_NAME];
 } t_registers;
 

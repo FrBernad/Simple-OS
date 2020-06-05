@@ -2,6 +2,7 @@
 #include <keyboardDriver.h>
 #include <taskManager.h>
 #include <videoDriver.h>
+#include <lib.h>
 
 #define SIZE_OF_STACK 4 * 1024
 #define MAX_PROCESSES 2
@@ -38,7 +39,7 @@ typedef struct {
 
 static t_PCB processes[MAX_PROCESSES];
 
-static uint8_t stacks[MAX_PROCESSES][SIZE_OF_STACK], stackIndex = 0;
+static uint8_t stacks[MAX_PROCESSES][SIZE_OF_STACK], freeStacks[MAX_PROCESSES]={0};
 
 t_queue taskManager = {processes, 0, -1, 0, MAX_PROCESSES, sizeof(t_PCB)};
 
@@ -69,18 +70,28 @@ void addProcess(t_PCB* process) {
 void killCurrentProcess() {
       t_PCB currentProcess;
       queueRemoveData(&taskManager, &currentProcess);
+      freeStacks[currentProcess.stackID]=0;
       addProcess(&currentProcess);
       sys_forceStart();
 }
 
-// t_PCB currentProcess;
-// queueRemoveData(&taskManager, &currentProcess);
-// t_application newApp = {currentProcess.entryPoint, currentProcess.screenID};
-// addProcess(&newApp);
-// sys_forceStart();
+void resetCurrentProcess(){
+      t_PCB currentProcess;
+      queuePeek(&taskManager,&currentProcess);
+      currentProcess.rsp = initializeStackFrame(currentProcess.entryPoint, (void*)(currentProcess.rbp + SIZE_OF_STACK - 1));
+      queueUpdateFirst(&taskManager,&currentProcess);
+      sys_forceStart();
+}
 
 static void* getNewStackBase() {
-      return stacks[stackIndex++];
+      for (int i = 0; i < MAX_PROCESSES; i++)
+      {
+            if(freeStacks[i]==0){
+                  freeStacks[i]=1;
+                  return stacks[i];
+            }
+      }
+      return 0;
 }
 
 static void* initializeStackFrame(void* entryPoint, void* baseStack) {

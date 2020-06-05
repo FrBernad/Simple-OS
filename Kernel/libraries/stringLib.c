@@ -1,6 +1,24 @@
 #include <stringLib.h>
-#include <systemCalls.h>
+#include <videoDriver.h>
 #include <utils.h>
+
+void sys_write(char* string, uint8_t lenght, t_colour bgColour, t_colour fontColour) {
+      for (int i = 0; string[i] != 0 && i < lenght; i++) {
+            if (string[i] == '\n') {
+                  changeLineOnScreen();
+            } else if (string[i] == '\b') {
+                  removeCharFromScreen();
+            } else {
+                  printCharOnScreen(string[i], bgColour, fontColour, 1);
+            }
+      }
+}
+
+void sys_staticwrite(char* string, uint8_t lenght, t_colour bgColour, t_colour fontColour) {
+      for (int i = 0; string[i] != 0 && i < lenght; i++) {
+            printCharOnScreen(string[i], bgColour, fontColour, 0);
+      }
+}
 
 void printString(char * str) {
       sys_write(str,strlen(str),BLACK,WHITE);
@@ -39,7 +57,7 @@ void printInt(uint64_t num) {
 }
 
 void clear(){  
-      sys_clear();
+      clearScreen();
 }
 
 void deletechar(){ 

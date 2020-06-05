@@ -1,43 +1,37 @@
-#include <taskManager.h>
-#include <buffer.h>
+#include <shell.h>
 #include <commands.h>
 #include <keys.h>
 #include <lib.h>
 #include <registers.h>
-#include <shell.h>
 #include <stdint.h>
 #include <stringLib.h>
 #include <systemCalls.h>
 #include <utils.h>
 
-static void initShell();
-static void shellText();
-static void processCommand();
-static void processChar(char c);
+static void initShell(t_shellData* shellData);
+static void shellText(t_shellData* shellData);
+static void processCommand(t_shellData* shellData);
+static void processChar(char c, t_shellData* shellData);
 
-static t_command commands[COMMANDS];
-static t_buffer shellBuffer = {{0}, 0};
-static char username[BUFFER_SIZE] = "USER";
-static t_registers registers;
+static char* regNames[] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RBP: ", "RDI: ", "RSI: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
 
-//TODO: checkear kill process que vuelva a resetar proceso
-//TODO: syscall exit al final runshel y calc
-//TODO: cambiar halt y blink a kernel driver PREGUNTAR A NICO
-//TODO: REVISAR TEMP
 //TODO: achicar syscalls
-//TODO: hacer lo de inforeg con una tecla
+//FIXME: checkear kill process que vuelva a resetar proceso
+//FIXME: cambiar halt y blink a kernel driver PREGUNTAR A NICO
+//FIXME: syscall exit al final runshel y calc
 
 void runShell() {
-      initShell();
+      t_shellData shellData;
+      initShell(&shellData);
       char c;
       while (1) {
             c = getchar();
-            processChar(c);
+            processChar(c,&shellData);
       }
-    //  sys_exit();
+      syscall(EXIT, 0, 0, 0, 0, 0, 0);
 }
 
-static void initShell() {
+static void initShell(t_shellData* shellData) {
       t_command commandsData[] = {
           {&help, "help", "Shows the list of commands and their use"},
           {&inforeg, "inforeg", "prints the value of all the registers on screen"},
@@ -49,24 +43,19 @@ static void initShell() {
           {&checkZeroException, "checkZeroException", "Triggers a zero division exception"},
           {&checkInvalidOpcodeException, "checkInvalidOpcodeException", "Triggers an invalid opcode exception"},
           {&showArgs, "showArgs", "prints the arguments passed to this command"}};
+
       for (int i = 0; i < COMMANDS; i++) {
-            commands[i].command = commandsData[i].command;
-            commands[i].name = commandsData[i].name;
-            commands[i].description = commandsData[i].description;
+            shellData->commands[i].command = commandsData[i].command;
+            shellData->commands[i].name = commandsData[i].name;
+            shellData->commands[i].description = commandsData[i].description;
       }
 
-      char* regNames[] = {"rip", "rax", "rcx", "rdx", "rbx", "rsi", "rdi", "rsp", "rbp", "r8", "r9", "r10", "r11", "r12", "r13", "r14", "r15"};
-      getRegistersData(registers.data);
-
-      for (int i = 0; i < REGISTERS; i++) {
-            strcpy(regNames[i], registers.name[i]);
-      }
-
-      cleanBuffer(&shellBuffer);
-      shellText();
+      cleanBuffer(&shellData->buffer);
+      strcpy("USER", shellData->username);
+      shellText(shellData);
 }
 
-static void processChar(char c) {
+static void processChar(char c, t_shellData * shellData) {
       if (c != 0) {
             switch (c) {
                   case CHANGE_SCREEN_0:
@@ -75,71 +64,85 @@ static void processChar(char c) {
                   case CHANGE_SCREEN_1:
                         break;
                   case CLEAR_SCREEN:
-                        sys_clear();
-                        cleanBuffer(&shellBuffer);
-                        shellText();
+                        syscall(CLEAR,0,0,0,0,0,0);
+                        cleanBuffer(&shellData->buffer);
+                        shellText(shellData);
                         break;
                   case '\n':
                         putchar('\n');
-                        processCommand();
-                        cleanBuffer(&shellBuffer);
-                        shellText();
+                        processCommand(shellData);
+                        cleanBuffer(&shellData->buffer);
+                        shellText(shellData);
                         break;
                   case '\b':
-                        if (shellBuffer.index > 0) {
-                              shellBuffer.buffer[--shellBuffer.index] = 0;
+                        if (shellData->buffer.index > 0) {
+                              shellData->buffer.buffer[--shellData->buffer.index] = 0;
                               deletechar();
                         }
                         break;
 
                   default:
-                        if (shellBuffer.index < BUFFER_SIZE) {
-                              shellBuffer.buffer[shellBuffer.index++] = c;
+                        if (shellData->buffer.index < BUFFER_SIZE) {
+                              shellData->buffer.buffer[shellData->buffer.index++] = c;
                               putchar(c);
                         }
             }
       }
 }
 
-static void processCommand() {
+static void processCommand(t_shellData * shellData) {
       int argc = 0;
       char arg1[BUFFER_SIZE] = {0}, arg2[BUFFER_SIZE] = {0}, arg3[BUFFER_SIZE] = {0}, arg4[BUFFER_SIZE] = {0};
       char* argv[MAX_ARGS] = {arg1, arg2, arg3, arg4};
       char command[BUFFER_SIZE] = {0};
       strtok(0, 0, ' ');
-      strtok(shellBuffer.buffer, command, ' ');  //parse buffer
-      strtok(0, command, ' ');                   //parse buffer
+      strtok(shellData->buffer.buffer, command, ' ');    //parse buffer
+      strtok(0, command, ' ');                           //parse buffer
       while (argc < MAX_ARGS && strtok(0, argv[argc], ' ')) {
             argc++;
       };
       strtok(0, 0, ' ');
       for (int i = 0; i < COMMANDS; i++) {
-            if (stringcmp(commands[i].name, command) == 0) {
-                  commands[i].command(argc, argv);
+            if (stringcmp(shellData->commands[i].name, command) == 0) {
+                  shellData->commands[i].command(argc, argv, shellData);
                   return;
             }
       }
       printStringLn("Invalid command");
 }
 
-static void shellText() {
-      printStringWC(username, BLACK, WHITE);
+static void shellText(t_shellData * shellData) {
+      printStringWC(shellData->username, BLACK, WHITE);
       printStringWC(" $ > ", BLACK, WHITE);
 }
 
-void changeUsername(int argc, char** argv) {
+void inforeg(int argc, char** args, t_shellData* shellData) {
+      if (argc != 0) {
+            printStringLn("Invalid ammount of arguments.");
+            putchar('\n');
+            return;
+      }
+      uint64_t* regData = (uint64_t*)syscall(INFOREG, 0, 0, 0, 0, 0, 0);
+      for (int i = 0; i < REGISTERS; i++) {
+            printString(" > ");
+            printString(regNames[i]);
+            printHex(regData[i]);
+            putchar('\n');
+      }
+      putchar('\n');
+}
+
+void changeUsername(int argc, char** argv, t_shellData * shellData) {
       if (argc != 1) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
             return;
       }
-      cleanString(username);
-      for (int i = 0; argv[0][i] != 0; i++) {
-            username[i] = argv[0][i];
-      }
+      cleanString(shellData->username);
+      strcpy(argv[0],shellData->username);
 }
 
-void help(int argc, char** args) {
+void help(int argc, char** args, t_shellData * shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
             putchar('\n');
@@ -149,25 +152,9 @@ void help(int argc, char** args) {
       printStringLn("These shell commands are defined internally.  Type 'help' to see this list.");
       for (int i = 0; i < COMMANDS; i++) {
             printString(" >");
-            printString(commands[i].name);
+            printString(shellData->commands[i].name);
             printString(": ");
-            printStringLn(commands[i].description);
-      }
-      putchar('\n');
-}
-
-void inforeg(int argc, char** args) {
-      if (argc != 0) {
-            printStringLn("Invalid ammount of arguments.");
-            putchar('\n');
-            return;
-      }
-      for (int i = 0; i < REGISTERS; i++) {
-            printString(" > ");
-            printString(registers.name[i]);
-            putchar(':');
-            printHex(registers.data[i]);
-            putchar('\n');
+            printStringLn(shellData->commands[i].description);
       }
       putchar('\n');
 }

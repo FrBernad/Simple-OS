@@ -3,7 +3,6 @@
 
 #include <buffer.h>
 #include <stdint.h>
-#include <systemCalls.h>
 #include <stringLib.h>
 
 #define IS_LETTER(c) (c >= 'a' && c <= 'z' ? 1 : 0)

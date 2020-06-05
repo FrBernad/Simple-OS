@@ -9,6 +9,7 @@ typedef struct {
       void* entryPoint;
       void* rsp;
       void* rbp;
+      int stackID;
       t_screenID screenID;
 } t_PCB;
 
