@@ -10,8 +10,6 @@ static void zero_division();
 static void invalid_op_code();
 static void printRegisters(uint64_t* registers);
 
-//TODO: 1 2 3 4 5 check print
-
 static char* regNames[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9: ",
                            "R8: ", "RSI: ", "RDI: ", "RBP: ", "RDX: ", "RCX: ", "RBX: ",
                            "RAX: ", "RIP: ", "RSP: "};

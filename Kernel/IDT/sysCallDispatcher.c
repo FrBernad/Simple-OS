@@ -47,7 +47,7 @@ uint64_t sysCallDispatcher(t_registers *r) {
                         break;
 
                   case SYS_LOAD_APP_ID:
-                        addProcess((t_PCB*)r->rdi);
+                        return addProcess((t_PCB*)r->rdi);
                         break;
 
                   case SYS_RUN_ID:

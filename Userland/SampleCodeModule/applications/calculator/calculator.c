@@ -31,7 +31,7 @@ static void processChar(char c, t_calcData* calcData) {
                         sys_changeApp();
                         break;
                   case CLEAR_SCREEN:
-                        syscall(RTC_TIME,HOURS,0,0,0,0,0);
+                        syscall(CLEAR,0,0,0,0,0,0);
                         cleanBuffer(&calcData->buffer);
                         calcText(calcData);
                         break;

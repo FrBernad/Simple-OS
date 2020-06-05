@@ -18,7 +18,7 @@ typedef struct{
 extern t_queue taskManager;
 
 void* schedule(void* oldRSP, int forceStart);
-void addProcess(t_PCB* process);
+int addProcess(t_PCB* process);
 void killCurrentProcess();
 void resetCurrentProcess();
 

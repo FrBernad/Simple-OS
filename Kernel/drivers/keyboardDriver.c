@@ -100,7 +100,6 @@ void changeBuffer(t_screenID screen) {
       currentBuffer = &buffers[screen];
 }
 
-
 static uint8_t action(uint8_t scanCode) {
       if (scanCode >= 0x01 && scanCode <= 0x3A)
             return PRESSED;

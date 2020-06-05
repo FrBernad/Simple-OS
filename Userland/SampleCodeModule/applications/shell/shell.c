@@ -15,10 +15,9 @@ static void processChar(char c, t_shellData* shellData);
 
 static char* regNames[] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RBP: ", "RDI: ", "RSI: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
 
-//TODO: achicar syscalls
-//FIXME: checkear kill process que vuelva a resetar proceso
+
+//TODO: CHECKEAR TODOS LOS PARAMETROS RECIBIDOS POR SYSCALLS Y FUNCIONES POR EJEMPLO EN LOAD PROCESS RECIBIR UNA SCREENQ  NO EXISTE
 //FIXME: cambiar halt y blink a kernel driver PREGUNTAR A NICO
-//FIXME: syscall exit al final runshel y calc
 
 void runShell() {
       t_shellData shellData;
@@ -31,6 +30,8 @@ void runShell() {
       syscall(EXIT, 0, 0, 0, 0, 0, 0);
 }
 
+
+//inicia la shell y todas sus estructuras 
 static void initShell(t_shellData* shellData) {
       t_command commandsData[] = {
           {&help, "help", "Shows the list of commands and their use"},
@@ -55,6 +56,7 @@ static void initShell(t_shellData* shellData) {
       shellText(shellData);
 }
 
+//procesa el caracter recibido actua segun el mismo
 static void processChar(char c, t_shellData * shellData) {
       if (c != 0) {
             switch (c) {
@@ -90,6 +92,7 @@ static void processChar(char c, t_shellData * shellData) {
       }
 }
 
+//procesa el comando, tokenizando lo ingresado.
 static void processCommand(t_shellData * shellData) {
       int argc = 0;
       char arg1[BUFFER_SIZE] = {0}, arg2[BUFFER_SIZE] = {0}, arg3[BUFFER_SIZE] = {0}, arg4[BUFFER_SIZE] = {0};

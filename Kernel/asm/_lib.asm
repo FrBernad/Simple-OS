@@ -97,6 +97,7 @@ cpuModel:
 	mov rsp, rbp
 	pop rbp
 	ret
+	
 cpuTemp:
 	push rbp
 	mov rbp, rsp

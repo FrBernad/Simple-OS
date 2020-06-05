@@ -9,6 +9,6 @@ typedef enum {
       HOURS = 0x04
 } t_timeInfo;
 
-uint8_t getDecimalTimeInfo(uint8_t info);
+uint8_t getDecimalTimeInfo(t_timeInfo info);
 
 #endif

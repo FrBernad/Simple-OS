@@ -1,6 +1,6 @@
+#include <taskManager.h>
 #include <interrupts.h>
 #include <keyboardDriver.h>
-#include <taskManager.h>
 #include <videoDriver.h>
 #include <lib.h>
 
@@ -60,14 +60,21 @@ void* schedule(void* oldRSP, int forceStart) {
       return nextProcess.rsp;
 }
 
-void addProcess(t_PCB* process) {
+int addProcess(t_PCB* process) {
+      if(process->screenID>MAX_SCREENS-1 || process->screenID<0 || process->entryPoint==0){
+            return 0;
+      }
       process->rbp = getNewStackBase();
       process->rsp = initializeStackFrame(process->entryPoint, (void*)(process->rbp + SIZE_OF_STACK - 1));
 
       queueInsert(&taskManager, process);
+      return 1;
 }
 
 void killCurrentProcess() {
+      if(queueIsEmpty(&taskManager)){
+            return;
+      }
       t_PCB currentProcess;
       queueRemoveData(&taskManager, &currentProcess);
       freeStacks[currentProcess.stackID]=0;
@@ -76,6 +83,9 @@ void killCurrentProcess() {
 }
 
 void resetCurrentProcess(){
+      if (queueIsEmpty(&taskManager)) {
+            return;
+      }
       t_PCB currentProcess;
       queuePeek(&taskManager,&currentProcess);
       currentProcess.rsp = initializeStackFrame(currentProcess.entryPoint, (void*)(currentProcess.rbp + SIZE_OF_STACK - 1));

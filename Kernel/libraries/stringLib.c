@@ -3,6 +3,10 @@
 #include <utils.h>
 
 void sys_write(char* string, uint8_t lenght, t_colour bgColour, t_colour fontColour) {
+      if(lenght<=0 || string==0 || bgColour < 0 || fontColour < 0){
+            return;
+      }
+
       for (int i = 0; string[i] != 0 && i < lenght; i++) {
             if (string[i] == '\n') {
                   changeLineOnScreen();
@@ -15,6 +19,10 @@ void sys_write(char* string, uint8_t lenght, t_colour bgColour, t_colour fontCol
 }
 
 void sys_staticwrite(char* string, uint8_t lenght, t_colour bgColour, t_colour fontColour) {
+      if (lenght <= 0 || string == 0 || bgColour < 0 || fontColour < 0) {
+            return;
+      }
+
       for (int i = 0; string[i] != 0 && i < lenght; i++) {
             printCharOnScreen(string[i], bgColour, fontColour, 0);
       }
@@ -52,16 +60,11 @@ void printHexWC(uint64_t num, t_colour bgColour, t_colour fontColour) {
 void printInt(uint64_t num) {
       char buffer[10];
       uintToBase(num, buffer, 10);
-      printString("\nrsp: ");
       printString(buffer);
 }
 
 void clear(){  
       clearScreen();
-}
-
-void deletechar(){ 
-      putchar('\b');
 }
 
 void staticputchar(char c){

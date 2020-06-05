@@ -50,7 +50,7 @@ syscall:
     mov rdx,rcx
     mov r10,r8
     mov r8,r9
-	mov r9,[rbp+8]
+	mov r9,[rbp+16]
     int 80h
 
 	popStateNoRax
