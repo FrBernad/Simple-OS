@@ -8,7 +8,7 @@
 
 static t_PCB processes[MAX_PROCESSES];
 
-//load apps in kernel and forces the first app in queue to run
+//carga las aplicaciones a correr y fuerza el inicio de la primera en la cola
 void initApps() {
       t_PCB shell = {&runShell, 0, 0, 0, SCREEN_1};
       t_PCB calculator = {&runCalculator, 0, 0, 0, SCREEN_0};

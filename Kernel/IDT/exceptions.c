@@ -14,6 +14,7 @@ static char* regNames[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ",
                            "R8: ", "RSI: ", "RDI: ", "RBP: ", "RDX: ", "RCX: ", "RBX: ",
                            "RAX: ", "RIP: ", "RSP: "};
 
+//Maneja la excepcion recibida y reinicia el proceso actual
 void exceptionDispatcher(int exception, void* stackframe) {
       switch (exception) {
             case ZERO_EXCEPTION_ID:

@@ -114,11 +114,14 @@ static void processCommand(t_shellData * shellData) {
       printStringLn("Invalid command");
 }
 
+
+//muestra en pantalla el texto de la shell
 static void shellText(t_shellData * shellData) {
       printStringWC(shellData->username, BLACK, WHITE);
       printStringWC(" $ > ", BLACK, WHITE);
 }
 
+//muestra la informacion recoletada sobre los registros obtenidos al haber presionado ctrl + s
 void inforeg(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
@@ -135,6 +138,7 @@ void inforeg(int argc, char** args, t_shellData* shellData) {
       putchar('\n');
 }
 
+//cambia el nombre del usuario mostrado en la shell
 void changeUsername(int argc, char** argv, t_shellData * shellData) {
       if (argc != 1) {
             printStringLn("Invalid ammount of arguments.");
@@ -145,6 +149,7 @@ void changeUsername(int argc, char** argv, t_shellData * shellData) {
       strcpy(argv[0],shellData->username);
 }
 
+//muestra la lista de comandos con sus descripciones
 void help(int argc, char** args, t_shellData * shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");

@@ -10,6 +10,7 @@
 static void* getNewStackBase();
 static void* initializeStackFrame(void* entryPoint, void* baseStack);
 
+//sacado de stackOverflow
 typedef struct {
       uint64_t gs;
       uint64_t fs;
@@ -104,6 +105,7 @@ static void* getNewStackBase() {
       return 0;
 }
 
+//sacado de stackOverflow
 static void* initializeStackFrame(void* entryPoint, void* baseStack) {
       t_stackFrame* frame = (t_stackFrame*)baseStack - 1;
       frame->gs = 0x001;

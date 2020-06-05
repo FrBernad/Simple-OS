@@ -2,7 +2,6 @@
 #include <lib.h>
 
 //https://www.tutorialspoint.com/data_structures_algorithms/queue_program_in_c.htm
-
 void queuePeek(t_queue* queue, void* data) {
       if (!(queueIsEmpty(queue))) {
             memcpy(data, (void*)((uint64_t)queue->queue + (queue->front * queue->dataSize)), queue->dataSize);

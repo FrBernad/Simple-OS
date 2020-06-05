@@ -58,6 +58,7 @@ static void processChar(char c, t_calcData* calcData) {
       }
 }
 
+//imprime el valor de la expresion matemtica ingresada, en caso de ser invalida, avisa del error
 void evaluate(char* expression) {
       int error = 0;
       char result[BUFFER_SIZE] = {0};

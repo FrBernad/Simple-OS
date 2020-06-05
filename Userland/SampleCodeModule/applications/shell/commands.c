@@ -10,6 +10,7 @@
 
 static void memToString(char* buffer, uint8_t* mem, int bytes);
 
+//devuelve el tiempo acutal del sistema
 void time(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
@@ -36,6 +37,7 @@ void time(int argc, char** args, t_shellData* shellData) {
       putchar('\n');
 }
 
+//devuelve el modelo y vendedor del cpu
 void cpuInfo(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
@@ -54,6 +56,7 @@ void cpuInfo(int argc, char** args, t_shellData* shellData) {
       putchar('\n');
 }
 
+//Hace un dump de 32 bytes de memria a partir de la direccion pedida
 void printmem(int argc, char** args,  t_shellData* shellData) {
       if (argc != 1) {
             printStringLn("Invalid ammount of arguments.");
@@ -100,6 +103,7 @@ void printmem(int argc, char** args,  t_shellData* shellData) {
       putchar('\n');
 }
 
+//Imprime la temperatura actual del cpu
 void cpuTemp(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
@@ -112,6 +116,7 @@ void cpuTemp(int argc, char** args, t_shellData* shellData) {
       putchar('\n');
 }
 
+//causa una excepcion de dividir por cero
 void checkZeroException(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
@@ -124,6 +129,7 @@ void checkZeroException(int argc, char** args, t_shellData* shellData) {
       }
 }
 
+//causa una excepcion de tipo invalid opcode
 void checkInvalidOpcodeException(int argc, char** args, t_shellData* shellData) {
       if (argc != 0) {
             printStringLn("Invalid ammount of arguments.");
@@ -133,6 +139,7 @@ void checkInvalidOpcodeException(int argc, char** args, t_shellData* shellData) 
       __asm__("ud2");  // https://hjlebbink.github.io/x86doc/html/UD2.html
 }
 
+//Muestra los argumentos pasados al comando
 void showArgs(int argc, char** args, t_shellData* shellData) {
       for (int i = 0; i < argc && i < MAX_ARGS; i++) {
             printString("arg[");
