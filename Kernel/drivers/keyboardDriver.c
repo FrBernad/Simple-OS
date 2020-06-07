@@ -99,9 +99,7 @@ void changeBuffer(t_screenID screen) {
 uint64_t* getSnapshot() {
       return registers;
 }
-//  rax	 rbx	 rcx	 rdx	 rbp	 rdi	 rsi	 r8
-//  r9
-//  r10	 r11	 r12	 r13	 r14	 r15
+
 static void updateSnapshot(uint64_t* rsp) {
       int i;
       for (i = 0; i < REGISTERS; i++) {

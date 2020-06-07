@@ -8,6 +8,7 @@
 #define MAX_PROCESSES 2
 
 static void* getNewStackBase();
+static int validScreen(t_screenID id);
 static void* initializeStackFrame(void* entryPoint, void* baseStack);
 
 //sacado de stackOverflow
@@ -40,7 +41,7 @@ typedef struct {
 
 static t_PCB processes[MAX_PROCESSES];
 
-static uint8_t stacks[MAX_PROCESSES][SIZE_OF_STACK], freeStacks[MAX_PROCESSES]={0};
+static uint8_t stacks[MAX_PROCESSES][SIZE_OF_STACK], freeStacks[MAX_PROCESSES]={0}, screens[MAX_SCREENS]={0};
 
 t_queue taskManager = {processes, 0, -1, 0, MAX_PROCESSES, sizeof(t_PCB)};
 
@@ -62,7 +63,7 @@ void* schedule(void* oldRSP, int forceStart) {
 }
 
 int addProcess(t_PCB* process) {
-      if(process->screenID>MAX_SCREENS-1 || process->screenID<0 || process->entryPoint==0 || queueIsFull(&taskManager)){
+      if( !validScreen(process->screenID) || process->entryPoint==0 || queueIsFull(&taskManager)){
             return 0;
       }
       process->rbp = getNewStackBase();
@@ -78,7 +79,8 @@ void killCurrentProcess() {
       }
       t_PCB currentProcess;
       queueRemoveData(&taskManager, &currentProcess);
-      freeStacks[currentProcess.stackID]=0;
+      freeStacks[currentProcess.stackID] = 0;
+      screens[currentProcess.screenID] = 0;
       addProcess(&currentProcess);
       sys_forceStart();
 }
@@ -103,6 +105,14 @@ static void* getNewStackBase() {
             }
       }
       return 0;
+}
+
+static int validScreen(t_screenID id) {
+      if (id > MAX_SCREENS - 1 || id < 0 || screens[id]==1){
+            return 0;
+      }
+      screens[id]=1;
+      return 1;
 }
 
 //sacado de stackOverflow

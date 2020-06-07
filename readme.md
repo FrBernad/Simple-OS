@@ -37,9 +37,9 @@ La calculadora realiza operaciones aritméticas con una ***sintaxis específica*
 
 1. Los operadores y operandos deben estar ***separados por espacios*** (si se quiere denotar un número como negativo se permite también poner el ‘-’ pegado al número. ej: -1.2 +  2).
 
-2. No tomará caracteres que ***no*** sean ***dígitos***, ***espacios***, ***puntos*** u ***operadores*** (‘+’, ‘-’, ‘*’ , ‘%’,‘(’ , ‘)’ o ‘=’).
+2. No tomará caracteres que ***no*** sean ***dígitos***, ***espacios***, ***puntos***, ***parentesis*** u ***operadores*** (‘+’, ‘-’, ‘*’, ‘%’, o ‘=’).
 
-3. Una vez ingresada la expresión se debe presionar ***'='*** y el resultado de la expresión sera impreso en pantalla.
+3. Una vez ingresada la expresión se debe presionar ***'='*** y el resultado de la expresión será impreso en pantalla.
 
 ***Ejemplo:***  ( 2.5 * 536 ) - 25 =
 

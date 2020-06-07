@@ -158,7 +158,6 @@ sys_getMem:
 	pop rbp
 	ret
 
-
 getBSDTimeInfo:
     push rbp
     mov rbp,rsp

@@ -31,6 +31,7 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base) {
 
       return digits;
 }
+
 //sacada de nvconsole
 uint32_t uintToBaseWL(uint64_t value, char *buffer, uint32_t base, uint32_t lenght) {
       char *p = buffer;
@@ -111,7 +112,6 @@ uint8_t BSDToInt(uint8_t num) {
 // next calls: call with NULL as string
 // if no more tokens are to return, NULL is returned
 // to reset, call with result = NULL
-
 char *strtok(char *string, char *result, const char delim) {
       static int currentIndex = 0;
       static char ogString[BUFFER_SIZE] = {0};

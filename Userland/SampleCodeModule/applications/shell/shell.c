@@ -32,15 +32,15 @@ void runShell() {
 //inicia la shell y todas sus estructuras 
 static void initShell(t_shellData* shellData) {
       t_command commandsData[] = {
-          {&help, "help", "Shows the list of commands and their use"},
+          {&help, "help", "shows the list of commands and their use"},
           {&inforeg, "inforeg", "prints the value of all the registers on screen, press ctrl + s to update values"},
           {&printmem, "printmem", "recieves an hexadecimal direction and makes a memory dump of 32 bytes on screen"},
           {&time, "time", "prints the current system time on screen"},
           {&cpuInfo, "cpuInfo", "prints the processor brand and model on screen"},
           {&cpuTemp, "cpuTemp", "prints the current processor temperature on screen"},
           {&changeUsername, "changeUsername", "changes the shell prompt username"},
-          {&checkZeroException, "checkZeroException", "Triggers a zero division exception"},
-          {&checkInvalidOpcodeException, "checkInvalidOpcodeException", "Triggers an invalid opcode exception"},
+          {&checkZeroException, "checkZeroException", "triggers a zero division exception"},
+          {&checkInvalidOpcodeException, "checkInvalidOpcodeException", "triggers an invalid opcode exception"},
           {&showArgs, "showArgs", "prints the arguments passed to this command"}};
 
       for (int i = 0; i < COMMANDS; i++) {
@@ -94,13 +94,17 @@ static void processCommand(t_shellData * shellData) {
       char arg1[BUFFER_SIZE] = {0}, arg2[BUFFER_SIZE] = {0}, arg3[BUFFER_SIZE] = {0}, arg4[BUFFER_SIZE] = {0};
       char* argv[MAX_ARGS] = {arg1, arg2, arg3, arg4};
       char command[BUFFER_SIZE] = {0};
+
       strtok(0, 0, ' ');
       strtok(shellData->buffer.buffer, command, ' ');    //parse buffer
       strtok(0, command, ' ');                           //parse buffer
+
       while (argc < MAX_ARGS && strtok(0, argv[argc], ' ')) {
             argc++;
       };
+
       strtok(0, 0, ' ');
+      
       for (int i = 0; i < COMMANDS; i++) {
             if (stringcmp(shellData->commands[i].name, command) == 0) {
                   shellData->commands[i].command(argc, argv, shellData);

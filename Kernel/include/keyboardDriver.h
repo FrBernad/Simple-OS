@@ -7,7 +7,6 @@
 void keyboardHandler(uint64_t rsp);
 char getchar();
 void changeBuffer(t_screenID screen);
-void runProcess();
 uint64_t* getSnapshot();
 
 #endif

@@ -2,8 +2,6 @@
 #include <RTCTime.h>
 #include <cpuInfo.h>
 #include <lib.h>
-#include <registers.h>
-#include <shell.h>
 #include <stringLib.h>
 #include <systemCalls.h>
 #include <utils.h>
@@ -110,9 +108,9 @@ void cpuTemp(int argc, char** args, t_shellData* shellData) {
             putchar('\n');
             return;
       }
-      printString("CPU temp:  ");
+      printString("CPU temp: ");
       printInt(syscall(TEMP, 0, 0, 0, 0, 0, 0));
-      printStringLn("C");
+      printStringLn(" C");
       putchar('\n');
 }
 
