@@ -65,9 +65,9 @@ void printmem(int argc, char** args,  t_shellData* shellData) {
       }
 
       int error = 0;
-      uint64_t memDir = strToInt(args[0], &error);
+      uint64_t memDir = strToHex(args[0], &error);
       if (error) {
-            printStringLn("Invalid argument for function printmem (must be an integer).");
+            printStringLn("Invalid argument for function printmem (must be a hex value).");
             putchar('\n');
             return;
       }

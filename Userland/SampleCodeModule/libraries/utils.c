@@ -31,6 +31,65 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base) {
 
       return digits;
 }
+//sacada de nvconsole
+uint32_t uintToBaseWL(uint64_t value, char *buffer, uint32_t base, uint32_t lenght) {
+      char *p = buffer;
+      char *p1, *p2;
+      uint32_t digits = 0;
+
+      //Calculate characters for each digit
+      do {
+            uint32_t remainder = value % base;
+            *p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
+            digits++;
+      } while (value /= base);
+
+      while (digits < lenght) {
+            *p++ = '0';
+            digits++;
+      }
+
+      // Terminate string in buffer.
+      *p = 0;
+
+      //Reverse string in buffer.
+      p1 = buffer;
+      p2 = p - 1;
+      while (p1 < p2) {
+            char tmp = *p1;
+            *p1 = *p2;
+            *p2 = tmp;
+            p1++;
+            p2--;
+      }
+
+      return digits;
+}
+
+uint64_t strToHex(char *str, int *error) {
+      uint64_t num = 0, val;
+      *error = 0;
+      int len = strlen(str);
+      len--;
+      for (int i = 0; str[i] != 0; i++) {
+            if (str[i] >= '0' && str[i] <= '9') {
+                  val = str[i] - '0';
+            } else if (str[i] >= 'a' && str[i] <= 'f') {
+                  val = str[i] - 'a' + 10;
+            } else if (str[i] >= 'A' && str[i] <= 'F') {
+                  val = str[i] - 'A' + 10;
+            }
+            else{
+                  *error = 1;
+                  return 0;
+            }
+
+            num += val * pow(16, len);
+            len--;
+      }
+      return num;
+}
+
 uint64_t pow(uint64_t x, uint64_t y) {
       if (y == 0)
             return 1;
@@ -53,7 +112,7 @@ uint8_t BSDToInt(uint8_t num) {
 // if no more tokens are to return, NULL is returned
 // to reset, call with result = NULL
 
-char * strtok(char *string, char *result, const char delim) {
+char *strtok(char *string, char *result, const char delim) {
       static int currentIndex = 0;
       static char ogString[BUFFER_SIZE] = {0};
 
@@ -73,7 +132,7 @@ char * strtok(char *string, char *result, const char delim) {
             for (int i = 0; string[i] != 0 && i < BUFFER_SIZE; i++) {
                   ogString[i] = string[i];
             }
-      } else {   
+      } else {
             if (currentIndex == BUFFER_SIZE || ogString[currentIndex] == 0) {
                   return 0;
             }
@@ -116,7 +175,7 @@ uint8_t stringcmp(char *str1, char *str2) {
 }
 
 void cleanBuffer(t_buffer *buffer) {
-      for (int i = 0; buffer->buffer[i] != 0; i++) {
+      for (int i = 0; i < BUFFER_SIZE; i++) {
             buffer->buffer[i] = 0;
       }
       buffer->index = 0;
@@ -170,13 +229,12 @@ void *memcpy(void *destination, const void *source, uint64_t length) {
       return destination;
 }
 
-
-int isNum(char *str){
+int isNum(char *str) {
       int index = 0;
-      if(str[index]=='.'){
+      if (str[index] == '.') {
             return 0;
       }
-      if(str[index]=='-'){
+      if (str[index] == '-') {
             index++;
       }
       if (!IS_DIGIT(str[index])) {
@@ -187,7 +245,7 @@ int isNum(char *str){
                   return 0;
             }
       }
-      if(str[index] == '.'){
+      if (str[index] == '.') {
             index++;
             for (; str[index] != 0; index++) {
                   if (!IS_DIGIT(str[index])) {
@@ -198,22 +256,22 @@ int isNum(char *str){
       return 1;
 }
 
-void strToDouble(char * numStr, int * error, double * result){
+void strToDouble(char *numStr, int *error, double *result) {
       *result = 0;
-      int i=0,k,sign=0;
-      double commaOffset=0;
+      int i = 0, k, sign = 0;
+      double commaOffset = 0;
       char integerPart[BUFFER_SIZE] = {0};
 
-      if(numStr[i]=='-'){
-            sign=1;
+      if (numStr[i] == '-') {
+            sign = 1;
             i++;
       }
 
-      for (k=0; numStr[i] != 0 && numStr[i] != '.'; i++,k++){
-            integerPart[k]=numStr[i];
+      for (k = 0; numStr[i] != 0 && numStr[i] != '.'; i++, k++) {
+            integerPart[k] = numStr[i];
       }
-      *result+=strToInt(integerPart,error);
-      if(numStr[i]=='.'){
+      *result += strToInt(integerPart, error);
+      if (numStr[i] == '.') {
             i++;
             for (; numStr[i] != 0; i++, commaOffset++) {
                   *result *= 10;
@@ -221,18 +279,18 @@ void strToDouble(char * numStr, int * error, double * result){
             }
             *result /= pow(10, commaOffset);
       }
-      if(sign){
-            *result*=-1;
+      if (sign) {
+            *result *= -1;
       }
 }
 
 // https://www.geeksforgeeks.org/convert-floating-point-number-string/
-void doubleToString(char *res, double total,int afterpoint) {
+void doubleToString(char *res, double total, int afterpoint) {
       int sign = 0;
-      if(total<0){
-            res[0]='-';
-            sign=1;
-            total*=-1;
+      if (total < 0) {
+            res[0] = '-';
+            sign = 1;
+            total *= -1;
       }
       // Extract integer part
       int ipart = (int)total;
@@ -241,11 +299,11 @@ void doubleToString(char *res, double total,int afterpoint) {
       float fpart = total - (double)ipart;
 
       // convert integer part to string
-      int i = intToStr(ipart, res+sign, 1);
+      int i = intToStr(ipart, res + sign, 1);
 
       // check for display option after point
       if (afterpoint != 0) {
-            res[i+sign] = '.';  // add dot
+            res[i + sign] = '.';  // add dot
 
             // Get the value of fraction part upto given no.
             // of points after dot. The third parameter

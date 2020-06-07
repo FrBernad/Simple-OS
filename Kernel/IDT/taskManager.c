@@ -62,7 +62,7 @@ void* schedule(void* oldRSP, int forceStart) {
 }
 
 int addProcess(t_PCB* process) {
-      if(process->screenID>MAX_SCREENS-1 || process->screenID<0 || process->entryPoint==0){
+      if(process->screenID>MAX_SCREENS-1 || process->screenID<0 || process->entryPoint==0 || queueIsFull(&taskManager)){
             return 0;
       }
       process->rbp = getNewStackBase();

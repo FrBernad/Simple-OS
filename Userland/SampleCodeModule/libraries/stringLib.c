@@ -33,6 +33,12 @@ void printHex(uint64_t num) {
       printString(buffer);
 }
 
+void printHexWL(uint64_t num, int lenght) {
+      char buffer[10];
+      uintToBaseWL(num, buffer, 16,8);
+      printString(buffer);
+}
+
 void printInt(uint64_t num) {
       char buffer[10];
       uintToBase(num, buffer, 10);

@@ -11,6 +11,7 @@ void printStringLn(char* str);
 void printStringWC(char* str, t_colour bgColour, t_colour fontColour);
 void printInt(uint64_t num);
 void printHex(uint64_t num);
+void printHexWLC(uint64_t num, int lenght, t_colour bgColour, t_colour fontColour);
 void printHexWC(uint64_t num, t_colour bgColour, t_colour fontColour);
 void putchar(char c);
 void putcharWC(char c, t_colour bgColour, t_colour fontColour);

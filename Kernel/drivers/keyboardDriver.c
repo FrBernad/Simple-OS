@@ -6,28 +6,28 @@
 
 //functions
 #include <interrupts.h>
-#include <videoDriver.h>
 #include <keyboardInfo.h>
-#include <staticQueue.h>
-#include <stdint.h>
-#include <utils.h>
 #include <lib.h>
+#include <staticQueue.h>
+#include <utils.h>
+#include <videoDriver.h>
 
-#define REGISTERS 15
+#define REGISTERS 16
 
 static uint8_t action(uint8_t scanCode);
+static void updateSnapshot(uint64_t* rsp);
 
 static char pressCodes[KEYS][2] =
-    {{0, 0}, {0, 0}, {'1', '!'}, {'2', '@'}, {'3', '#'}, {'4', '$'}, {'5', '%'}, {'6', '^'}, {'7', '&'}, {'8', '*'}, {'9', '('}, {'0', ')'}, {'-', '_'}, {'=', '+'}, {'\b', '\b'}, {0, 0}, {'q', 'Q'}, {'w', 'W'}, {'e', 'E'}, {'r', 'R'}, {'t', 'T'}, {'y', 'Y'}, {'u', 'U'}, {'i', 'I'}, {'o', 'O'}, {'p', 'P'}, {'[', '{'}, {']', '}'}, {'\n', '\n'}, {0, 0}, {'a', 'A'}, {'s', 'S'}, {'d', 'D'}, {'f', 'F'}, {'g', 'G'}, {'h', 'H'}, {'j', 'J'}, {'k', 'K'}, {'l', 'L'}, {';', ':'}, {'\'', '\"'}, {'`', '~'}, {0, 0}, {'\\', '|'}, {'z', 'Z'}, {'x', 'X'}, {'c', 'C'}, {'v', 'V'}, {'b', 'B'}, {'n', 'N'}, {'m', 'M'}, {',', '<'}, {'.', '>'}, {'/', '?'}, {0, 0}, {0, 0}, {0, 0}, {' ', ' '}, {0, 0}};
+    {{0, 0}, {0, 0}, {'1', '!'}, {'2', '@'}, {'3', '#'}, {'4', '$'}, {'5', '%'}, {'6', '^'}, {'7', '&'}, {'8', '*'}, {'9', '('}, {'0', ')'}, {'-', '_'}, {'=', '+'}, {'\b', '\b'}, {'\t', '\t'}, {'q', 'Q'}, {'w', 'W'}, {'e', 'E'}, {'r', 'R'}, {'t', 'T'}, {'y', 'Y'}, {'u', 'U'}, {'i', 'I'}, {'o', 'O'}, {'p', 'P'}, {'[', '{'}, {']', '}'}, {'\n', '\n'}, {0, 0}, {'a', 'A'}, {'s', 'S'}, {'d', 'D'}, {'f', 'F'}, {'g', 'G'}, {'h', 'H'}, {'j', 'J'}, {'k', 'K'}, {'l', 'L'}, {';', ':'}, {'\'', '\"'}, {'`', '~'}, {0, 0}, {'\\', '|'}, {'z', 'Z'}, {'x', 'X'}, {'c', 'C'}, {'v', 'V'}, {'b', 'B'}, {'n', 'N'}, {'m', 'M'}, {',', '<'}, {'.', '>'}, {'/', '?'}, {0, 0}, {0, 0}, {0, 0}, {' ', ' '}, {0, 0}};
 
 static uint8_t scanCode, currentAction, specialChars = 0, capsLock = 0, l_ctrl = 0;
 static char buffer1[MAX_SIZE] = {0}, buffer2[MAX_SIZE] = {0};
 static t_queue buffers[MAX_SCREENS] = {{buffer1, 0, -1, 0, MAX_SIZE, sizeof(char)}, {buffer2, 0, -1, 0, MAX_SIZE, sizeof(char)}};
 static t_queue* currentBuffer;
+static t_specialKeyCode clearS = CLEAR_SCREEN;
+static uint64_t registers[REGISTERS+1] = {0};
 
-t_specialKeyCode cs0 = CHANGE_SCREEN_0, cs1 = CHANGE_SCREEN_1, clearS = CLEAR_SCREEN, snapShot = SNAP_SHOT;
-
-void keyboardHandler() {
+void keyboardHandler(uint64_t rsp) {
       if (hasKey()) {
             scanCode = getKey();
             currentAction = action(scanCode);
@@ -50,14 +50,10 @@ void keyboardHandler() {
                               default:
                                     if (pressCodes[scanCode][0] != 0) {
                                           if (l_ctrl) {
-                                                if (pressCodes[scanCode][0] == '0' + SCREEN_0) {
-                                                      queueInsert(currentBuffer, &cs0);
-                                                } else if (pressCodes[scanCode][0] == '0' + SCREEN_1) {
-                                                      queueInsert(currentBuffer, &cs1);
-                                                } else if (pressCodes[scanCode][0] == 'l') {
+                                                if (pressCodes[scanCode][0] == 'l') {
                                                       queueInsert(currentBuffer, &clearS);
-                                                } else if (pressCodes[scanCode][0] == 's'){
-                                                      updateSnapshot();
+                                                } else if (pressCodes[scanCode][0] == 's') {
+                                                      updateSnapshot((uint64_t*)rsp);
                                                 }
                                           } else {
                                                 if (!IS_LETTER(pressCodes[scanCode][0])) {
@@ -98,6 +94,20 @@ char getchar() {
 
 void changeBuffer(t_screenID screen) {
       currentBuffer = &buffers[screen];
+}
+
+uint64_t* getSnapshot() {
+      return registers;
+}
+//  rax	 rbx	 rcx	 rdx	 rbp	 rdi	 rsi	 r8
+//  r9
+//  r10	 r11	 r12	 r13	 r14	 r15
+static void updateSnapshot(uint64_t* rsp) {
+      int i;
+      for (i = 0; i < REGISTERS; i++) {
+            registers[i] = rsp[i];
+      }
+      registers[i] = rsp[15 + 3];  //load rsp manualy
 }
 
 static uint8_t action(uint8_t scanCode) {

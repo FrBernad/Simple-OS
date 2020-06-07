@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#define REGISTERS 15
+#define REGISTERS 17
 #define REG_NAME 10
 
 typedef struct {

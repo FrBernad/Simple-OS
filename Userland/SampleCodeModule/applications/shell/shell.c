@@ -13,11 +13,9 @@ static void shellText(t_shellData* shellData);
 static void processCommand(t_shellData* shellData);
 static void processChar(char c, t_shellData* shellData);
 
-static char* regNames[] = {"RAX: ", "RBX: ", "RCX: ", "RDX: ", "RBP: ", "RDI: ", "RSI: ", "R8: ", "R9: ", "R10: ", "R11: ", "R12: ", "R13: ", "R14: ", "R15: "};
-
-
-//TODO: CHECKEAR TODOS LOS PARAMETROS RECIBIDOS POR SYSCALLS Y FUNCIONES POR EJEMPLO EN LOAD PROCESS RECIBIR UNA SCREENQ  NO EXISTE
-//FIXME: cambiar halt y blink a kernel driver PREGUNTAR A NICO
+static char* regNames[] = {"R15: ", "R14: ", "R13: ", "R12: ", "R11: ", "R10: ", "R9: ",
+                           "R8: ", "RSI: ", "RDI: ", "RBP: ", "RDX: ", "RCX: ", "RBX: ",
+                           "RAX: ", "RIP: ", "RSP: "};
 
 void runShell() {
       t_shellData shellData;
@@ -35,8 +33,8 @@ void runShell() {
 static void initShell(t_shellData* shellData) {
       t_command commandsData[] = {
           {&help, "help", "Shows the list of commands and their use"},
-          {&inforeg, "inforeg", "prints the value of all the registers on screen"},
-          {&printmem, "printmem", "recieves a pointer and makes a memory dump of 32 bytes on screen"},
+          {&inforeg, "inforeg", "prints the value of all the registers on screen, press ctrl + s to update values"},
+          {&printmem, "printmem", "recieves an hexadecimal direction and makes a memory dump of 32 bytes on screen"},
           {&time, "time", "prints the current system time on screen"},
           {&cpuInfo, "cpuInfo", "prints the processor brand and model on screen"},
           {&cpuTemp, "cpuTemp", "prints the current processor temperature on screen"},
@@ -60,10 +58,8 @@ static void initShell(t_shellData* shellData) {
 static void processChar(char c, t_shellData * shellData) {
       if (c != 0) {
             switch (c) {
-                  case CHANGE_SCREEN_0:
+                  case '\t':
                         sys_changeApp();
-                        break;
-                  case CHANGE_SCREEN_1:
                         break;
                   case CLEAR_SCREEN:
                         syscall(CLEAR,0,0,0,0,0,0);
@@ -132,7 +128,7 @@ void inforeg(int argc, char** args, t_shellData* shellData) {
       for (int i = 0; i < REGISTERS; i++) {
             printString(" > ");
             printString(regNames[i]);
-            printHex(regData[i]);
+            printHexWL(regData[i],8);
             putchar('\n');
       }
       putchar('\n');

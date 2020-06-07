@@ -31,6 +31,64 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base) {
       return digits;
 }
 
+//sacada de nvconsole
+uint32_t uintToBaseWL(uint64_t value, char *buffer, uint32_t base, uint32_t lenght) {
+      char *p = buffer;
+      char *p1, *p2;
+      uint32_t digits = 0;
+
+      //Calculate characters for each digit
+      do {
+            uint32_t remainder = value % base;
+            *p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
+            digits++;
+      } while (value /= base);
+
+      while (digits < lenght) {
+            *p++ = '0';
+            digits++;
+      }
+
+      // Terminate string in buffer.
+      *p = 0;
+
+      //Reverse string in buffer.
+      p1 = buffer;
+      p2 = p - 1;
+      while (p1 < p2) {
+            char tmp = *p1;
+            *p1 = *p2;
+            *p2 = tmp;
+            p1++;
+            p2--;
+      }
+
+      return digits;
+}
+
+uint64_t strToHex(char *str, int *error) {
+      uint64_t num = 0, val;
+      *error = 0;
+      int len = strlen(str);
+      len--;
+      for (int i = 0; str[i] != 0; i++) {
+            if (str[i] >= '0' && str[i] <= '9') {
+                  val = str[i] - '0';
+            } else if (str[i] >= 'a' && str[i] <= 'f') {
+                  val = str[i] - 'a' + 10;
+            } else if (str[i] >= 'A' && str[i] <= 'F') {
+                  val = str[i] - 'A' + 10;
+            } else {
+                  *error = 1;
+                  return 0;
+            }
+
+            num += val * pow(16, len);
+            len--;
+      }
+      return num;
+}
+
 uint64_t pow(uint64_t x, uint64_t y) {
       if (y == 0)
             return 1;

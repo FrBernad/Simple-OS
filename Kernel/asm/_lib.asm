@@ -108,7 +108,8 @@ cpuTemp:
 	mov rax,0
 	mov rcx,0
 	mov ecx, 0x19C ;codigo que corresponde a THERMAL STATUS
-	rdmsr          ;me deja en eax la parte baja del msr solicitado, que en este caso es la unica que me interesa
+	;rdmsr          ;me deja en eax la parte baja del msr solicitado, que en este caso es la unica que me interesa
+	mov rax,0x88310000
 	shr rax,16                          ;shifteo que usaria para quedarme con los bits que me importan
 	and rax,0x7F ;0x00000000000007F     ;set in rax last 7 bits digital readout (22:16)
 	mov rdi,rax							;backup digital readout
@@ -116,7 +117,8 @@ cpuTemp:
  	mov rcx,0
 	mov rax,0
 	mov ecx,0x1A2
-	rdmsr                             ;access DTS_THERMAL_PROFILE msr
+	;rdmsr                             ;access DTS_THERMAL_PROFILE msr
+	mov rax,0x690A00
 	shr rax,16                         ;shifteo que usaria para quedarme con los bits que me importan
 	and rax,0xFF ;0x00000000000000FF    ;set in rax last 8 bits of TCC ACTIVATION TEMP (23:16)
 
@@ -171,46 +173,23 @@ getBSDTimeInfo:
 
 sys_forceStart:
 	pushaq
-	mov rsi,1 ;force start
+
+	mov rsi,1		 ;force start
 	call schedule
+
 	mov rsp, rax
+
 	popaq
 	iretq
 
 sys_changeProcess:
 	pushaq
-	mov rdi,rsp
 
-	mov rsi,0 ;start not forced
+	mov rdi,rsp
+	mov rsi,0 		;start not forced
 	call schedule
+
 	mov rsp,rax
 
 	popaq
 	iretq
-
-
-
-updateSnapshot:
-	mov [registers+8*0],rax
-	mov [registers+8*1],rbx
-	mov [registers+8*2],rcx
-	mov [registers+8*3],rdx
-	mov [registers+8*4],rbp
-	mov [registers+8*5],rdi
-	mov [registers+8*6],rsi
-	mov [registers+8*7],r8
-	mov [registers+8*8],r9
-	mov [registers+8*9],r10
-	mov [registers+8*10],r11
-	mov [registers+8*11],r12
-	mov [registers+8*12],r13
-	mov [registers+8*13],r14
-	mov [registers+8*14],r15
-	ret
-
-getSnapshot:
-	mov rax,registers
-	ret
-
- section .bss
-	registers resq 15

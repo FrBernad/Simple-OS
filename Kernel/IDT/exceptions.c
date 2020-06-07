@@ -1,6 +1,6 @@
+#include <lib.h>
 #include <stringLib.h>
 #include <taskManager.h>
-#include <lib.h>
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
@@ -31,20 +31,19 @@ void exceptionDispatcher(int exception, void* stackframe) {
 }
 
 static void zero_division() {
-      printStringWC("Warning: division by zero is undefined\n", BLACK, RED);
+      printStringWC("Exception 0: division by zero is undefined\n", BLACK, RED);
 }
 
 static void invalid_op_code() {
-      printStringWC("Invalid Opcode\n", BLACK, RED);
+      printStringWC("Exception 6: invalid opcode\n", BLACK, RED);
 }
 
 static void printRegisters(uint64_t* registers) {
-
       for (int i = 0; i < REGISTERS; i++) {
-            printStringWC(regNames[i],BLACK,RED);
-            printHexWC(registers[i],BLACK,RED);
+            printStringWC(regNames[i], BLACK, RED);
+            printHexWLC(registers[i], 8, BLACK, RED);
             putchar('\n');
       }
       printStringWC(regNames[REGISTERS], BLACK, RED);
-      printHexWC(registers[15+3], BLACK, RED);  //print rsp value from interrupt stackframe
+      printHexWLC(registers[15 + 3], 8, BLACK, RED);  //print rsp value from interrupt stackframe
 }

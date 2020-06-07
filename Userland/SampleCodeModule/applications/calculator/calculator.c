@@ -22,12 +22,16 @@ void runCalculator() {
       syscall(EXIT, 0, 0, 0, 0, 0, 0);
 }
 
+static void initCalculator(t_calcData* calcData) {
+      cleanBuffer(&calcData->buffer);
+      strcpy("CALCULATOR", calcData->name);
+      calcText(calcData);
+}
+
 static void processChar(char c, t_calcData* calcData) {
       if (c != 0) {
             switch (c) {
-                  case CHANGE_SCREEN_0:
-                        break;
-                  case CHANGE_SCREEN_1:
+                  case '\t':
                         sys_changeApp();
                         break;
                   case CLEAR_SCREEN:
@@ -58,6 +62,11 @@ static void processChar(char c, t_calcData* calcData) {
       }
 }
 
+static void calcText(t_calcData* calcData) {
+      printString(calcData->name);
+      printString(" $ > ");
+}
+
 //imprime el valor de la expresion matemtica ingresada, en caso de ser invalida, avisa del error
 void evaluate(char* expression) {
       int error = 0;
@@ -78,13 +87,4 @@ void evaluate(char* expression) {
       putchar('\n');
 }
 
-static void initCalculator(t_calcData* calcData) {
-      cleanBuffer(&calcData->buffer);
-      strcpy("CALCULATOR", calcData->name);
-      calcText(calcData);
-}
 
-static void calcText(t_calcData* calcData) {
-      printString(calcData->name);
-      printString(" $ > ");
-}
